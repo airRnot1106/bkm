@@ -34,3 +34,17 @@ export const BookmarkUrl = z.url({
 >();
 
 export type BookmarkUrl = z.infer<typeof BookmarkUrl>;
+
+/* BookmarkTag */
+
+export declare const BookmarkTagBrand: unique symbol;
+
+export const BOOKMARK_TAG_MAX_LENGTH = 50;
+
+export const BookmarkTag = z.string().trim().min(1).max(
+  BOOKMARK_TAG_MAX_LENGTH,
+).brand<
+  typeof BookmarkTagBrand
+>();
+
+export type BookmarkTag = z.infer<typeof BookmarkTag>;
