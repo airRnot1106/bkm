@@ -21,3 +21,16 @@ export const BookmarkTitle = z.string().trim().min(1).max(
 >();
 
 export type BookmarkTitle = z.infer<typeof BookmarkTitle>;
+
+/* BookmarkUrl */
+
+export declare const BookmarkUrlBrand: unique symbol;
+
+export const BookmarkUrl = z.url({
+  protocol: /^https?$/,
+  hostname: z.regexes.domain,
+}).brand<
+  typeof BookmarkUrlBrand
+>();
+
+export type BookmarkUrl = z.infer<typeof BookmarkUrl>;
