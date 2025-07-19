@@ -2,7 +2,7 @@ import * as fc from "fast-check";
 import { assertEquals } from "@std/assert";
 import { Result } from "@praha/byethrow";
 import { bookmarkGenerator } from "./bookmark.mock.ts";
-import { BookmarkId } from "./bookmark.ts";
+import { BookmarkId, BookmarkTitle } from "./bookmark.ts";
 
 Deno.test("bookmark-id", async (t) => {
   await t.step("should create a bookmark id", async (t) => {
@@ -34,6 +34,47 @@ Deno.test("bookmark-id", async (t) => {
             assertEquals(result1.value, result2.value);
           }
         }),
+      );
+    });
+  });
+});
+
+Deno.test("bookmark-title", async (t) => {
+  await t.step("should create a bookmark title", async (t) => {
+    await t.step("should accept valid bookmark title format", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.bookmarkTitle.valid(),
+          (maybeBookmarkTitle) => {
+            const result = Result.parse(BookmarkTitle, maybeBookmarkTitle);
+            assertEquals(Result.isSuccess(result), true);
+          },
+        ),
+      );
+    });
+    await t.step("should reject invalid bookmark title format", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.bookmarkTitle.invalid(),
+          (maybeBookmarkTitle) => {
+            const result = Result.parse(BookmarkTitle, maybeBookmarkTitle);
+            assertEquals(Result.isFailure(result), true);
+          },
+        ),
+      );
+    });
+    await t.step("should be equal when titles are the same", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.bookmarkTitle.valid(),
+          (bookmarkTitle) => {
+            const result1 = Result.parse(BookmarkTitle, bookmarkTitle);
+            const result2 = Result.parse(BookmarkTitle, bookmarkTitle);
+            if (Result.isSuccess(result1) && Result.isSuccess(result2)) {
+              assertEquals(result1.value, result2.value);
+            }
+          },
+        ),
       );
     });
   });
