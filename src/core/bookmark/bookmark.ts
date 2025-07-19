@@ -48,3 +48,16 @@ export const BookmarkTag = z.string().trim().min(1).max(
 >();
 
 export type BookmarkTag = z.infer<typeof BookmarkTag>;
+
+/* Bookmark */
+
+export declare const BookmarkBrand: unique symbol;
+
+export const Bookmark = z.object({
+  id: BookmarkId,
+  title: BookmarkTitle,
+  url: BookmarkUrl,
+  tags: z.array(BookmarkTag),
+}).brand<typeof BookmarkBrand>();
+
+export type Bookmark = z.infer<typeof Bookmark>;
