@@ -44,4 +44,8 @@ export const bookmarkGenerator = {
         fc.nat({ max: MAX_NAT }).map((num) => " ".repeat(num)),
       ),
   },
+  bookmarkUrl: {
+    valid: () => fc.webUrl({ withFragments: true, withQueryParameters: true }),
+    invalid: () => fc.string().filter((url) => !/^https?:\/\/.+\..+/.test(url)),
+  },
 };
