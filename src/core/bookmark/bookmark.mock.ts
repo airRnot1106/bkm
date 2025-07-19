@@ -85,3 +85,43 @@ export const bookmarkTagGenerator = {
       fc.nat({ max: MAX_NAT }).map((num) => " ".repeat(num)),
     ),
 };
+
+export const bookmarkGenerator = {
+  valid: () =>
+    fc.record({
+      id: bookmarkIdGenerator.valid(),
+      title: bookmarkTitleGenerator.valid(),
+      url: bookmarkUrlGenerator.valid(),
+      tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+    }),
+  invalid: () =>
+    fc.oneof(
+      fc.record({
+        id: bookmarkIdGenerator.invalid(),
+        title: bookmarkTitleGenerator.valid(),
+        url: bookmarkUrlGenerator.valid(),
+        tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+      }),
+      fc.record({
+        id: bookmarkIdGenerator.valid(),
+        title: bookmarkTitleGenerator.invalid(),
+        url: bookmarkUrlGenerator.valid(),
+        tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+      }),
+      fc.record({
+        id: bookmarkIdGenerator.valid(),
+        title: bookmarkTitleGenerator.valid(),
+        url: bookmarkUrlGenerator.invalid(),
+        tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+      }),
+      fc.record({
+        id: bookmarkIdGenerator.valid(),
+        title: bookmarkTitleGenerator.valid(),
+        url: bookmarkUrlGenerator.valid(),
+        tags: fc.tuple(
+          bookmarkTagGenerator.valid(),
+          bookmarkTagGenerator.invalid(),
+        ),
+      }),
+    ),
+};
