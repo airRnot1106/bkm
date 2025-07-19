@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Result } from "@praha/byethrow";
 
 /* BookmarkId */
 
@@ -61,3 +62,9 @@ export const Bookmark = z.object({
 }).brand<typeof BookmarkBrand>();
 
 export type Bookmark = z.infer<typeof Bookmark>;
+
+export interface IBookmarkRepository {
+  save(bookmark: Bookmark): Result.ResultAsync<Bookmark, Error>;
+  findAll(): Result.ResultAsync<Bookmark[], Error>;
+  findById(id: BookmarkId): Result.ResultAsync<Bookmark | null, Error>;
+}
