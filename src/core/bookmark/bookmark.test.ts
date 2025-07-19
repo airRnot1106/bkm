@@ -2,12 +2,14 @@ import * as fc from "fast-check";
 import { assertEquals } from "@std/assert";
 import { Result } from "@praha/byethrow";
 import {
+  bookmarkGenerator,
   bookmarkIdGenerator,
   bookmarkTagGenerator,
   bookmarkTitleGenerator,
   bookmarkUrlGenerator,
 } from "./bookmark.mock.ts";
 import {
+  Bookmark,
   BookmarkId,
   BookmarkTag,
   BookmarkTitle,
@@ -162,6 +164,48 @@ Deno.test("bookmark-tag", async (t) => {
           (bookmarkTag) => {
             const result1 = Result.parse(BookmarkTag, bookmarkTag);
             const result2 = Result.parse(BookmarkTag, bookmarkTag);
+            if (Result.isSuccess(result1) && Result.isSuccess(result2)) {
+              assertEquals(result1.value, result2.value);
+            }
+          },
+        ),
+      );
+    });
+  });
+});
+
+Deno.test("bookmark", async (t) => {
+  await t.step("should create a bookmark", async (t) => {
+    await t.step("should accept valid bookmark format", () => {
+      fc.property(
+        bookmarkGenerator.valid(),
+        (maybeBookmark) => {
+          const result = Result.parse(
+            Bookmark,
+            maybeBookmark,
+          );
+          assertEquals(Result.isSuccess(result), true);
+        },
+      );
+    });
+    await t.step("should reject invalid bookmark format", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.invalid(),
+          (maybeBookmark) => {
+            const result = Result.parse(Bookmark, maybeBookmark);
+            assertEquals(Result.isFailure(result), true);
+          },
+        ),
+      );
+    });
+    await t.step("should be equal when bookmarks are the same", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.valid(),
+          (bookmark) => {
+            const result1 = Result.parse(Bookmark, bookmark);
+            const result2 = Result.parse(Bookmark, bookmark);
             if (Result.isSuccess(result1) && Result.isSuccess(result2)) {
               assertEquals(result1.value, result2.value);
             }
