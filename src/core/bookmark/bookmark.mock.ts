@@ -1,5 +1,8 @@
 import * as fc from "fast-check";
-import { BOOKMARK_TITLE_MAX_LENGTH } from "./bookmark.ts";
+import {
+  BOOKMARK_TAG_MAX_LENGTH,
+  BOOKMARK_TITLE_MAX_LENGTH,
+} from "./bookmark.ts";
 
 const MAX_NAT = 10000;
 
@@ -47,5 +50,37 @@ export const bookmarkGenerator = {
   bookmarkUrl: {
     valid: () => fc.webUrl({ withFragments: true, withQueryParameters: true }),
     invalid: () => fc.string().filter((url) => !/^https?:\/\/.+\..+/.test(url)),
+  },
+  bookmarkTag: {
+    valid: () =>
+      fc.oneof(
+        fc.string().map((title) => title.trim()).filter((title) =>
+          title.length > 0 && title.length <= BOOKMARK_TAG_MAX_LENGTH
+        ),
+        fc.tuple(
+          fc.nat({ max: MAX_NAT }),
+          fc.nat({ max: MAX_NAT }),
+        ).map((
+          [start, end],
+        ) =>
+          " ".repeat(start) + "X".repeat(BOOKMARK_TAG_MAX_LENGTH) +
+          " ".repeat(end)
+        ),
+      ),
+    invalid: () =>
+      fc.oneof(
+        fc.string().filter((title) =>
+          title.length < 1 || title.length > BOOKMARK_TAG_MAX_LENGTH
+        ),
+        fc.tuple(
+          fc.nat({ max: MAX_NAT }),
+          fc.nat({ max: MAX_NAT }),
+        ).map(([start, end]) =>
+          " ".repeat(start) + "X".repeat(BOOKMARK_TAG_MAX_LENGTH + 1) +
+          " ".repeat(end)
+        ),
+        fc.constant(""),
+        fc.nat({ max: MAX_NAT }).map((num) => " ".repeat(num)),
+      ),
   },
 };
