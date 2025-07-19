@@ -2,7 +2,12 @@ import * as fc from "fast-check";
 import { assertEquals } from "@std/assert";
 import { Result } from "@praha/byethrow";
 import { bookmarkGenerator } from "./bookmark.mock.ts";
-import { BookmarkId, BookmarkTitle, BookmarkUrl } from "./bookmark.ts";
+import {
+  BookmarkId,
+  BookmarkTag,
+  BookmarkTitle,
+  BookmarkUrl,
+} from "./bookmark.ts";
 
 Deno.test("bookmark-id", async (t) => {
   await t.step("should create a bookmark id", async (t) => {
@@ -111,6 +116,47 @@ Deno.test("bookmark-url", async (t) => {
           (bookmarkUrl) => {
             const result1 = Result.parse(BookmarkUrl, bookmarkUrl);
             const result2 = Result.parse(BookmarkUrl, bookmarkUrl);
+            if (Result.isSuccess(result1) && Result.isSuccess(result2)) {
+              assertEquals(result1.value, result2.value);
+            }
+          },
+        ),
+      );
+    });
+  });
+});
+
+Deno.test("bookmark-tag", async (t) => {
+  await t.step("should create a bookmark tag", async (t) => {
+    await t.step("should accept valid bookmark tag format", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.bookmarkTag.valid(),
+          (maybeBookmarkTag) => {
+            const result = Result.parse(BookmarkTag, maybeBookmarkTag);
+            assertEquals(Result.isSuccess(result), true);
+          },
+        ),
+      );
+    });
+    await t.step("should reject invalid bookmark tag format", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.bookmarkTag.invalid(),
+          (maybeBookmarkTag) => {
+            const result = Result.parse(BookmarkTag, maybeBookmarkTag);
+            assertEquals(Result.isFailure(result), true);
+          },
+        ),
+      );
+    });
+    await t.step("should be equal when tags are the same", () => {
+      fc.assert(
+        fc.property(
+          bookmarkGenerator.bookmarkTag.valid(),
+          (bookmarkTag) => {
+            const result1 = Result.parse(BookmarkTag, bookmarkTag);
+            const result2 = Result.parse(BookmarkTag, bookmarkTag);
             if (Result.isSuccess(result1) && Result.isSuccess(result2)) {
               assertEquals(result1.value, result2.value);
             }
