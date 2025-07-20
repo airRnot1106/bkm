@@ -59,6 +59,8 @@ export const Bookmark = z.object({
   title: BookmarkTitle,
   url: BookmarkUrl,
   tags: z.array(BookmarkTag),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 }).brand<typeof BookmarkBrand>();
 
 export type Bookmark = z.infer<typeof Bookmark>;

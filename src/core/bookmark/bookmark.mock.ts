@@ -93,6 +93,8 @@ export const bookmarkGenerator = {
       title: bookmarkTitleGenerator.valid(),
       url: bookmarkUrlGenerator.valid(),
       tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+      createdAt: fc.date(),
+      updatedAt: fc.date(),
     }),
   invalid: () =>
     fc.oneof(
@@ -101,18 +103,24 @@ export const bookmarkGenerator = {
         title: bookmarkTitleGenerator.valid(),
         url: bookmarkUrlGenerator.valid(),
         tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+        createdAt: fc.date(),
+        updatedAt: fc.date(),
       }),
       fc.record({
         id: bookmarkIdGenerator.valid(),
         title: bookmarkTitleGenerator.invalid(),
         url: bookmarkUrlGenerator.valid(),
         tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+        createdAt: fc.date(),
+        updatedAt: fc.date(),
       }),
       fc.record({
         id: bookmarkIdGenerator.valid(),
         title: bookmarkTitleGenerator.valid(),
         url: bookmarkUrlGenerator.invalid(),
         tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
+        createdAt: fc.date(),
+        updatedAt: fc.date(),
       }),
       fc.record({
         id: bookmarkIdGenerator.valid(),
@@ -122,6 +130,8 @@ export const bookmarkGenerator = {
           bookmarkTagGenerator.valid(),
           bookmarkTagGenerator.invalid(),
         ),
+        createdAt: fc.date(),
+        updatedAt: fc.date(),
       }),
     ),
 };
