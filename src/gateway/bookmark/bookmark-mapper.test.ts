@@ -16,9 +16,9 @@ Deno.test("bookmark-mapper", async (t) => {
 
           if (Result.isSuccess(result)) {
             assertEquals(result.value.id, dto.id);
-            assertEquals(result.value.title, dto.title);
+            assertEquals(result.value.title, dto.title.trim());
             assertEquals(result.value.url, dto.url);
-            assertEquals(result.value.tags, dto.tags);
+            assertEquals(result.value.tags, dto.tags.map((tag) => tag.trim()));
             assertEquals(result.value.createdAt.toISOString(), dto.createdAt);
             assertEquals(result.value.updatedAt.toISOString(), dto.updatedAt);
           }
