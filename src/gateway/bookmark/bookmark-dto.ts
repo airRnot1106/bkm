@@ -3,6 +3,6 @@ export interface IBookmarkDto {
   title: string; // BookmarkTitle
   url: string; // BookmarkUrl
   tags: string[]; // Array of BookmarkTag
-  createdAt: Date; // ISO string
-  updatedAt: Date; // ISO string
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 }
