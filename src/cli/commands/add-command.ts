@@ -15,7 +15,7 @@ interface AddCommandOptions {
   tags?: string;
 }
 
-function validateTitle(input: string): string | true {
+const validateTitle = (input: string): string | true => {
   const trimmed = input.trim();
   if (trimmed.length === 0) {
     return "Title cannot be empty";
@@ -24,9 +24,9 @@ function validateTitle(input: string): string | true {
     return `Title must be ${BOOKMARK_TITLE_MAX_LENGTH} characters or less`;
   }
   return true;
-}
+};
 
-function validateUrl(input: string): string | true {
+const validateUrl = (input: string): string | true => {
   try {
     const url = new URL(input);
     if (!["http:", "https:"].includes(url.protocol)) {
@@ -36,9 +36,9 @@ function validateUrl(input: string): string | true {
   } catch {
     return "Please enter a valid URL";
   }
-}
+};
 
-function validateTags(input: string): string | true {
+const validateTags = (input: string): string | true => {
   if (input.trim() === "") return true;
 
   const tags = input.split(",").map((tag) => tag.trim());
@@ -51,9 +51,9 @@ function validateTags(input: string): string | true {
     }
   }
   return true;
-}
+};
 
-async function promptForMissingInputs(options: AddCommandOptions) {
+const promptForMissingInputs = async (options: AddCommandOptions) => {
   const title = options.title ?? await Input.prompt({
     message: "Enter bookmark title:",
     validate: validateTitle,
@@ -71,14 +71,14 @@ async function promptForMissingInputs(options: AddCommandOptions) {
   });
 
   return { title, url, tags };
-}
+};
 
-function getDataDirectory(): string {
+const getDataDirectory = (): string => {
   const homeDir = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "/tmp";
   return join(homeDir, ".bkm");
-}
+};
 
-async function saveBookmark(title: string, url: string, tags: string) {
+const saveBookmark = async (title: string, url: string, tags: string) => {
   const dataDir = getDataDirectory();
   const repository = createBookmarkJsonRepository(dataDir);
   const addBookmark = createAddBookmarkUseCase({
@@ -102,9 +102,9 @@ async function saveBookmark(title: string, url: string, tags: string) {
     }
     Deno.exit(1);
   }
-}
+};
 
-export function createAddCommand() {
+export const createAddCommand = () => {
   return new Command()
     .name("add")
     .description("Add a new bookmark")
@@ -115,4 +115,4 @@ export function createAddCommand() {
       const inputs = await promptForMissingInputs(options);
       await saveBookmark(inputs.title, inputs.url, inputs.tags);
     });
-}
+};
