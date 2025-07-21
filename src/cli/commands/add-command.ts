@@ -62,9 +62,7 @@ const getDataDirectory = (): string => {
 const saveBookmark = async (title: string, url: string, tags: string) => {
   const dataDir = getDataDirectory();
   const repository = createBookmarkJsonRepository(dataDir);
-  const addBookmark = createAddBookmarkUseCase({
-    bookmarkRepository: repository,
-  });
+  const addBookmark = createAddBookmarkUseCase(repository);
 
   const tagsArray = tags.trim() === ""
     ? []

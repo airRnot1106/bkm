@@ -10,7 +10,7 @@ import {
 import z from "zod";
 
 export const createAddBookmarkUseCase = (
-  { bookmarkRepository }: { bookmarkRepository: IBookmarkRepository },
+  bookmarkRepository: IBookmarkRepository,
 ) =>
 ({ title, url, tags = [] }: {
   title: string;

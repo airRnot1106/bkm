@@ -30,9 +30,7 @@ Deno.test("add-bookmark usecase", async (t) => {
         fc.array(bookmarkTagGenerator.valid()),
         async (title, url, tags) => {
           const mockRepository = createMockRepository();
-          const addBookmark = createAddBookmarkUseCase({
-            bookmarkRepository: mockRepository,
-          });
+          const addBookmark = createAddBookmarkUseCase(mockRepository);
 
           const result = await addBookmark({ title, url, tags });
 
@@ -49,9 +47,7 @@ Deno.test("add-bookmark usecase", async (t) => {
         bookmarkUrlGenerator.valid(),
         async (title, url) => {
           const mockRepository = createMockRepository();
-          const addBookmark = createAddBookmarkUseCase({
-            bookmarkRepository: mockRepository,
-          });
+          const addBookmark = createAddBookmarkUseCase(mockRepository);
 
           const result = await addBookmark({ title, url });
 
@@ -69,9 +65,7 @@ Deno.test("add-bookmark usecase", async (t) => {
         fc.array(bookmarkTagGenerator.valid()),
         async (title, url, tags) => {
           const mockRepository = createMockRepository();
-          const addBookmark = createAddBookmarkUseCase({
-            bookmarkRepository: mockRepository,
-          });
+          const addBookmark = createAddBookmarkUseCase(mockRepository);
 
           const result = await addBookmark({ title, url, tags });
 
@@ -89,9 +83,7 @@ Deno.test("add-bookmark usecase", async (t) => {
         fc.array(bookmarkTagGenerator.valid()),
         async (title, url, tags) => {
           const mockRepository = createMockRepository();
-          const addBookmark = createAddBookmarkUseCase({
-            bookmarkRepository: mockRepository,
-          });
+          const addBookmark = createAddBookmarkUseCase(mockRepository);
 
           const result = await addBookmark({ title, url, tags });
 
@@ -112,9 +104,7 @@ Deno.test("add-bookmark usecase", async (t) => {
         ),
         async (title, url, [validTag, invalidTag]) => {
           const mockRepository = createMockRepository();
-          const addBookmark = createAddBookmarkUseCase({
-            bookmarkRepository: mockRepository,
-          });
+          const addBookmark = createAddBookmarkUseCase(mockRepository);
 
           const result = await addBookmark({
             title,
@@ -137,9 +127,7 @@ Deno.test("add-bookmark usecase", async (t) => {
         async (title, url, tags) => {
           const saveError = new Error("Repository save failed");
           const failingRepository = createFailingRepository(saveError);
-          const addBookmark = createAddBookmarkUseCase({
-            bookmarkRepository: failingRepository,
-          });
+          const addBookmark = createAddBookmarkUseCase(failingRepository);
 
           const result = await addBookmark({ title, url, tags });
 
