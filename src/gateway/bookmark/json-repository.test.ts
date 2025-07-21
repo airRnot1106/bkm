@@ -149,3 +149,51 @@ Deno.test("JsonRepository - save() creates new bookmark when file doesn't exist"
 
   await Deno.remove(tempDir, { recursive: true });
 });
+
+Deno.test("JsonRepository - save() updates existing bookmark", async () => {
+  const tempDir = await Deno.makeTempDir();
+  const jsonFile = `${tempDir}/bookmarks.json`;
+
+  const testData: IBookmarkDto[] = [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Original Bookmark",
+      url: "https://original.com",
+      tags: ["original"],
+      createdAt: "2023-01-01T00:00:00.000Z",
+      updatedAt: "2023-01-01T00:00:00.000Z",
+    },
+  ];
+
+  await Deno.writeTextFile(jsonFile, JSON.stringify(testData, null, 2));
+
+  const updatedBookmark = {
+    id: "550e8400-e29b-41d4-a716-446655440000" as BookmarkId,
+    title: "Updated Bookmark",
+    url: "https://updated.com",
+    tags: ["updated"],
+    createdAt: new Date("2023-01-01T00:00:00.000Z"),
+    updatedAt: new Date("2023-01-02T00:00:00.000Z"),
+  } as Bookmark;
+
+  const repository = createBookmarkJsonRepository(tempDir);
+  const result = await repository.save(updatedBookmark);
+
+  assertEquals(Result.isSuccess(result), true);
+  if (Result.isSuccess(result)) {
+    assertEquals(result.value.id, "550e8400-e29b-41d4-a716-446655440000");
+    assertEquals(result.value.title, "Updated Bookmark");
+    assertEquals(result.value.url, "https://updated.com");
+  }
+
+  // Verify file was updated and still has only one bookmark
+  const findAllResult = await repository.findAll();
+  assertEquals(Result.isSuccess(findAllResult), true);
+  if (Result.isSuccess(findAllResult)) {
+    assertEquals(findAllResult.value.length, 1);
+    assertEquals(findAllResult.value[0].title, "Updated Bookmark");
+    assertEquals(findAllResult.value[0].url, "https://updated.com");
+  }
+
+  await Deno.remove(tempDir, { recursive: true });
+});
