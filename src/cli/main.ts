@@ -6,8 +6,6 @@ export function createCli() {
     .name("bkm")
     .version("0.1.0")
     .description("Bookmark manager CLI tool")
-    .globalOption("-h, --help", "Show help information")
-    .globalOption("-v, --version", "Show version information")
     .command("add", createAddCommand());
 
   return cli;

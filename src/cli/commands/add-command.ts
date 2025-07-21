@@ -7,7 +7,7 @@ import {
 } from "../../core/bookmark/bookmark.ts";
 import { createAddBookmarkUseCase } from "../../usecase/add-bookmark.ts";
 import { createBookmarkJsonRepository } from "../../gateway/bookmark/json-repository.ts";
-import { path } from "@std/path";
+import { join } from "@std/path";
 
 interface AddCommandOptions {
   title?: string;
@@ -75,7 +75,7 @@ async function promptForMissingInputs(options: AddCommandOptions) {
 
 function getDataDirectory(): string {
   const homeDir = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "/tmp";
-  return path.join(homeDir, ".bkm");
+  return join(homeDir, ".bkm");
 }
 
 async function saveBookmark(title: string, url: string, tags: string) {
