@@ -9,8 +9,43 @@ export const createBookmarkJsonRepository = (
   const getJsonFilePath = () => `${dataDir}/bookmarks.json`;
 
   return {
-    save(_bookmark) {
-      return Promise.resolve(Result.fail(new Error("Not implemented")));
+    async save(bookmark) {
+      try {
+        const allBookmarksResult = await this.findAll();
+
+        if (Result.isFailure(allBookmarksResult)) {
+          return allBookmarksResult;
+        }
+
+        const bookmarks = allBookmarksResult.value;
+        const existingIndex = bookmarks.findIndex((b) => b.id === bookmark.id);
+
+        if (existingIndex >= 0) {
+          // Update existing bookmark
+          bookmarks[existingIndex] = bookmark;
+        } else {
+          // Add new bookmark
+          bookmarks.push(bookmark);
+        }
+
+        // Convert to DTOs and write to file
+        const dtos = bookmarks.map((b) => bookmarkMapper.toDto(b));
+        const jsonFilePath = getJsonFilePath();
+
+        // Ensure directory exists
+        await Deno.mkdir(dataDir, { recursive: true });
+
+        await Deno.writeTextFile(
+          jsonFilePath,
+          JSON.stringify(dtos, null, 2),
+        );
+
+        return Result.succeed(bookmark);
+      } catch (error) {
+        return Result.fail(
+          new Error("Failed to save bookmark", { cause: error }),
+        );
+      }
     },
     async findAll() {
       try {
