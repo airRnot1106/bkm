@@ -49,8 +49,15 @@ export const createBookmarkJsonRepository = (
         );
       }
     },
-    findById(_id) {
-      return Promise.resolve(Result.fail(new Error("Not implemented")));
+    async findById(id) {
+      const allBookmarksResult = await this.findAll();
+
+      if (Result.isFailure(allBookmarksResult)) {
+        return allBookmarksResult;
+      }
+
+      const bookmark = allBookmarksResult.value.find((b) => b.id === id);
+      return Result.succeed(bookmark || null);
     },
   };
 };
