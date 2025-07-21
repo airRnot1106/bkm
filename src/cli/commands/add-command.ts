@@ -17,7 +17,7 @@ interface AddCommandOptions {
   tags?: string;
 }
 
-const validateSchema = <
+const createSchemaValidator = <
   T extends Parameters<typeof Result.parse>[0],
   V,
   R,
@@ -34,18 +34,21 @@ const validateSchema = <
 const promptForMissingInputs = async (options: AddCommandOptions) => {
   const title = options.title ?? await Input.prompt({
     message: "Enter bookmark title:",
-    validate: validateSchema(BookmarkTitle),
+    validate: createSchemaValidator(BookmarkTitle),
   });
 
   const url = options.url ?? await Input.prompt({
     message: "Enter bookmark URL:",
-    validate: validateSchema(BookmarkUrl),
+    validate: createSchemaValidator(BookmarkUrl),
   });
 
   const tags = options.tags ?? await Input.prompt({
     message: "Enter tags (comma-separated, optional):",
     default: "",
-    validate: validateSchema(z.array(BookmarkTag), (tags) => tags.split(",")),
+    validate: createSchemaValidator(
+      z.array(BookmarkTag),
+      (tags) => tags.split(","),
+    ),
   });
 
   return { title, url, tags };
