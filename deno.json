@@ -12,5 +12,8 @@
     "fast-check": "npm:fast-check@4.2.0",
     "date-fns": "npm:date-fns@4.1.0",
     "zod": "npm:zod@^4.0.5"
+  },
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true
   }
 }
