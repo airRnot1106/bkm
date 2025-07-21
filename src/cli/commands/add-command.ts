@@ -1,9 +1,13 @@
 import { Command } from "@cliffy/command";
 import { Input } from "@cliffy/prompt";
+import { Result } from "@praha/byethrow";
 import {
   BOOKMARK_TAG_MAX_LENGTH,
   BOOKMARK_TITLE_MAX_LENGTH,
 } from "../../core/bookmark/bookmark.ts";
+import { createAddBookmarkUseCase } from "../../usecase/add-bookmark.ts";
+import { createBookmarkJsonRepository } from "../../gateway/bookmark/json-repository.ts";
+import { path } from "@std/path";
 
 interface AddCommandOptions {
   title?: string;
@@ -69,6 +73,37 @@ async function promptForMissingInputs(options: AddCommandOptions) {
   return { title, url, tags };
 }
 
+function getDataDirectory(): string {
+  const homeDir = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "/tmp";
+  return path.join(homeDir, ".bkm");
+}
+
+async function saveBookmark(title: string, url: string, tags: string) {
+  const dataDir = getDataDirectory();
+  const repository = createBookmarkJsonRepository(dataDir);
+  const addBookmark = createAddBookmarkUseCase({
+    bookmarkRepository: repository,
+  });
+
+  const tagsArray = tags.trim() === ""
+    ? []
+    : tags.split(",").map((tag) => tag.trim());
+
+  const result = await addBookmark({ title, url, tags: tagsArray });
+
+  if (Result.isSuccess(result)) {
+    console.log("✅ Bookmark added successfully!");
+  } else {
+    console.error("❌ Failed to add bookmark:");
+    if (result.error instanceof Error) {
+      console.error(result.error.message);
+    } else {
+      console.error("Unknown error occurred");
+    }
+    Deno.exit(1);
+  }
+}
+
 export function createAddCommand() {
   return new Command()
     .name("add")
@@ -78,6 +113,6 @@ export function createAddCommand() {
     .option("--tags <tags:string>", "Comma-separated tags")
     .action(async (options: AddCommandOptions) => {
       const inputs = await promptForMissingInputs(options);
-      console.log("Bookmark data:", inputs);
+      await saveBookmark(inputs.title, inputs.url, inputs.tags);
     });
 }
