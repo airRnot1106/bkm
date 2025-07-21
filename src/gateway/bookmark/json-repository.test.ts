@@ -197,3 +197,21 @@ Deno.test("JsonRepository - save() updates existing bookmark", async () => {
 
   await Deno.remove(tempDir, { recursive: true });
 });
+
+Deno.test("JsonRepository - findAll() handles invalid JSON gracefully", async () => {
+  const tempDir = await Deno.makeTempDir();
+  const jsonFile = `${tempDir}/bookmarks.json`;
+
+  // Write invalid JSON
+  await Deno.writeTextFile(jsonFile, "{ invalid json }");
+
+  const repository = createBookmarkJsonRepository(tempDir);
+  const result = await repository.findAll();
+
+  assertEquals(Result.isFailure(result), true);
+  if (Result.isFailure(result)) {
+    assertEquals(result.error.message, "Failed to read bookmarks");
+  }
+
+  await Deno.remove(tempDir, { recursive: true });
+});
