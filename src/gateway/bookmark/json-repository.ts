@@ -9,90 +9,65 @@ export const createBookmarkJsonRepository = (
   const getJsonFilePath = () => `${dataDir}/bookmarks.json`;
 
   return {
-    async save(bookmark) {
-      try {
-        const allBookmarksResult = await this.findAll();
+    save(bookmark) {
+      return Result.pipe(
+        this.findAll(),
+        Result.map((
+          bookmarks,
+        ) => [...bookmarks.filter((b) => b.id !== bookmark.id), bookmark]),
+        Result.map((bookmarks) => bookmarks.map(bookmarkMapper.toDto)),
+        Result.andThrough((dtos) =>
+          Result.try({
+            try: async () => {
+              const jsonFilePath = getJsonFilePath();
 
-        if (Result.isFailure(allBookmarksResult)) {
-          return allBookmarksResult;
-        }
+              // Ensure directory exists
+              await Deno.mkdir(dataDir, { recursive: true });
 
-        const bookmarks = allBookmarksResult.value;
-        const existingIndex = bookmarks.findIndex((b) => b.id === bookmark.id);
-
-        if (existingIndex >= 0) {
-          // Update existing bookmark
-          bookmarks[existingIndex] = bookmark;
-        } else {
-          // Add new bookmark
-          bookmarks.push(bookmark);
-        }
-
-        // Convert to DTOs and write to file
-        const dtos = bookmarks.map((b) => bookmarkMapper.toDto(b));
-        const jsonFilePath = getJsonFilePath();
-
-        // Ensure directory exists
-        await Deno.mkdir(dataDir, { recursive: true });
-
-        await Deno.writeTextFile(
-          jsonFilePath,
-          JSON.stringify(dtos, null, 2),
-        );
-
-        return Result.succeed(bookmark);
-      } catch (error) {
-        return Result.fail(
-          new Error("Failed to save bookmark", { cause: error }),
-        );
-      }
-    },
-    async findAll() {
-      try {
-        const jsonFilePath = getJsonFilePath();
-
-        try {
-          const content = await Deno.readTextFile(jsonFilePath);
-          const dtos: IBookmarkDto[] = JSON.parse(content);
-
-          const bookmarks = [];
-          for (const dto of dtos) {
-            const bookmarkResult = bookmarkMapper.toDomain(dto);
-            if (Result.isSuccess(bookmarkResult)) {
-              bookmarks.push(bookmarkResult.value);
-            } else {
-              return Result.fail(
-                new Error(
-                  `Failed to convert DTO to domain: ${
-                    JSON.stringify(bookmarkResult.error)
-                  }`,
-                ),
+              await Deno.writeTextFile(
+                jsonFilePath,
+                JSON.stringify(dtos, null, 2),
               );
-            }
-          }
-
-          return Result.succeed(bookmarks);
-        } catch (error) {
-          if (error instanceof Deno.errors.NotFound) {
-            return Result.succeed([]);
-          }
-          throw error;
-        }
-      } catch (error) {
-        return Result.fail(
-          new Error("Failed to read bookmarks", { cause: error }),
-        );
-      }
+            },
+            catch: (error) =>
+              new Error("Failed to save bookmarks", { cause: error }),
+          })()
+        ),
+        Result.map(() => null),
+      );
     },
-    async findById(id) {
-      const allBookmarksResult = await this.findAll();
+    findAll() {
+      return Result.pipe(
+        Result.try({
+          try: async () => {
+            const jsonFilePath = getJsonFilePath();
 
-      if (Result.isFailure(allBookmarksResult)) {
-        return allBookmarksResult;
-      }
-
-      const bookmark = allBookmarksResult.value.find((b) => b.id === id);
-      return Result.succeed(bookmark || null);
+            const text = await Deno.readTextFile(jsonFilePath);
+            return JSON.parse(text) as IBookmarkDto[];
+          },
+          catch: (error) =>
+            new Error("Failed to read bookmarks", { cause: error }),
+        })(),
+        Result.andThen((dtos) =>
+          Result.combine(dtos.map(bookmarkMapper.toDomain))
+        ),
+        Result.mapError((errors) =>
+          new Error("Failed to parse bookmarks", { cause: errors })
+        ),
+      );
+    },
+    findById(id) {
+      return Result.pipe(
+        this.findAll(),
+        Result.map((bookmarks) =>
+          bookmarks.find((bookmark) => bookmark.id === id)
+        ),
+        Result.andThen((bookmark) =>
+          bookmark
+            ? Result.succeed(bookmark)
+            : Result.fail(new Error(`Bookmark with id ${id} not found`))
+        ),
+      );
     },
   };
 };

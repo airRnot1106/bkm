@@ -66,7 +66,7 @@ export const Bookmark = z.object({
 export type Bookmark = z.infer<typeof Bookmark>;
 
 export interface IBookmarkRepository {
-  save(bookmark: Bookmark): Result.ResultAsync<Bookmark, Error>;
+  save(bookmark: Bookmark): Result.ResultAsync<null, Error>;
   findAll(): Result.ResultAsync<Bookmark[], Error>;
   findById(id: BookmarkId): Result.ResultAsync<Bookmark | null, Error>;
 }
