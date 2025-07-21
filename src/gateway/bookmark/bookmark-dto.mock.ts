@@ -27,24 +27,36 @@ export const bookmarkDtoGenerator = {
         title: bookmarkTitleGenerator.valid(),
         url: bookmarkUrlGenerator.valid().map((url) => new URL(url).href),
         tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
-        createdAt: fc.date().map((date) => date.toISOString()),
-        updatedAt: fc.date().map((date) => date.toISOString()),
+        createdAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
+        updatedAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
       }),
       fc.record({
         id: bookmarkIdGenerator.valid(),
         title: bookmarkTitleGenerator.invalid(),
         url: bookmarkUrlGenerator.valid().map((url) => new URL(url).href),
         tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
-        createdAt: fc.date().map((date) => date.toISOString()),
-        updatedAt: fc.date().map((date) => date.toISOString()),
+        createdAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
+        updatedAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
       }),
       fc.record({
         id: bookmarkIdGenerator.valid(),
         title: bookmarkTitleGenerator.valid(),
         url: bookmarkUrlGenerator.invalid(),
         tags: fc.array(bookmarkTagGenerator.valid(), { minLength: 0 }),
-        createdAt: fc.date().map((date) => date.toISOString()),
-        updatedAt: fc.date().map((date) => date.toISOString()),
+        createdAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
+        updatedAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
       }),
       fc.record({
         id: bookmarkIdGenerator.valid(),
@@ -54,8 +66,12 @@ export const bookmarkDtoGenerator = {
           bookmarkTagGenerator.valid(),
           bookmarkTagGenerator.invalid(),
         ),
-        createdAt: fc.date().map((date) => date.toISOString()),
-        updatedAt: fc.date().map((date) => date.toISOString()),
+        createdAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
+        updatedAt: fc.date({ "noInvalidDate": true }).map((date) =>
+          date.toISOString()
+        ),
       }),
     ),
 };

@@ -8,6 +8,21 @@ export const createBookmarkJsonRepository = (
 ): IBookmarkRepository => {
   const getJsonFilePath = () => `${dataDir}/bookmarks.json`;
 
+  const ensureFileExists = async () => {
+    const jsonFilePath = getJsonFilePath();
+    try {
+      await Deno.stat(jsonFilePath);
+    } catch (error) {
+      if (error instanceof Deno.errors.NotFound) {
+        // Create an empty file if it doesn't exist
+        await Deno.mkdir(dataDir, { recursive: true });
+        await Deno.writeTextFile(jsonFilePath, "[]");
+      } else {
+        throw new Error("Failed to check bookmarks file", { cause: error });
+      }
+    }
+  };
+
   return {
     save(bookmark) {
       return Result.pipe(
@@ -21,8 +36,7 @@ export const createBookmarkJsonRepository = (
             try: async () => {
               const jsonFilePath = getJsonFilePath();
 
-              // Ensure directory exists
-              await Deno.mkdir(dataDir, { recursive: true });
+              await ensureFileExists();
 
               await Deno.writeTextFile(
                 jsonFilePath,
@@ -41,6 +55,8 @@ export const createBookmarkJsonRepository = (
         Result.try({
           try: async () => {
             const jsonFilePath = getJsonFilePath();
+
+            await ensureFileExists();
 
             const text = await Deno.readTextFile(jsonFilePath);
             return JSON.parse(text) as IBookmarkDto[];

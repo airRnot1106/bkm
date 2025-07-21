@@ -15,13 +15,17 @@ Deno.test("bookmark json-repository", async (t) => {
 
       const result = await repository.findAll();
 
-      assertEquals(Result.isFailure(result), true);
+      assertEquals(Result.isSuccess(result), true);
+      if (Result.isSuccess(result)) {
+        const bookmarks = result.value;
+        assertEquals(bookmarks.length, 0);
+      }
     },
   );
   await t.step(
     "findAll() returns bookmarks from existing file",
-    () => {
-      fc.assert(
+    async () => {
+      await fc.assert(
         fc.asyncProperty(
           fc.array(bookmarkDtoGenerator.valid()),
           async (bookmarkDtos) => {
@@ -47,15 +51,15 @@ Deno.test("bookmark json-repository", async (t) => {
   );
   await t.step(
     "findById() returns bookmark when exists",
-    () => {
-      fc.assert(
+    async () => {
+      await fc.assert(
         fc.asyncProperty(
           fc.array(bookmarkDtoGenerator.valid(), { minLength: 5 }),
           fc.nat({ max: 4 }),
           async (bookmarkDtos, index) => {
             const tempDir = await Deno.makeTempDir();
             const repository = createBookmarkJsonRepository(tempDir);
-            Result.pipe(
+            await Result.pipe(
               Result.do(),
               Result.andThrough(() =>
                 Result.try({
@@ -71,12 +75,12 @@ Deno.test("bookmark json-repository", async (t) => {
               Result.andThen(() =>
                 Result.combine(bookmarkDtos.map(bookmarkMapper.toDomain))
               ),
-              Result.andThen((bookmarks) => {
+              Result.andThen(async (bookmarks) => {
                 const target = bookmarks[index];
                 if (!target) {
                   return Result.fail(new Error("Not found target bookmark"));
                 }
-                return repository.findById(target.id);
+                return await repository.findById(target.id);
               }),
               Result.andThrough((bookmark) => {
                 assertNotEquals(bookmark, null);
@@ -90,14 +94,14 @@ Deno.test("bookmark json-repository", async (t) => {
   );
   await t.step(
     "findById() returns null when not exists",
-    () => {
-      fc.assert(
+    async () => {
+      await fc.assert(
         fc.asyncProperty(
           fc.array(bookmarkDtoGenerator.valid()),
           async (bookmarkDtos) => {
             const tempDir = await Deno.makeTempDir();
             const repository = createBookmarkJsonRepository(tempDir);
-            Result.pipe(
+            await Result.pipe(
               Result.do(),
               Result.andThrough(() =>
                 Result.try({
@@ -110,9 +114,9 @@ Deno.test("bookmark json-repository", async (t) => {
                   catch: (error) => new Error(`Failed to write file: ${error}`),
                 })()
               ),
-              Result.andThen(() => {
+              Result.andThen(async () => {
                 const nonExistentId = "non-existent-id" as BookmarkId;
-                return repository.findById(nonExistentId);
+                return await repository.findById(nonExistentId);
               }),
               Result.andThrough((bookmark) => {
                 assertEquals(bookmark, null);
@@ -126,8 +130,8 @@ Deno.test("bookmark json-repository", async (t) => {
   );
   await t.step(
     "save() creates new bookmark when file doesn't exist",
-    () => {
-      fc.assert(
+    async () => {
+      await fc.assert(
         fc.asyncProperty(
           bookmarkDtoGenerator.valid(),
           async (bookmarkDto) => {
