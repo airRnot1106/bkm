@@ -2,12 +2,14 @@ import { Command } from "@cliffy/command";
 import { Input } from "@cliffy/prompt";
 import { Result } from "@praha/byethrow";
 import {
-  BOOKMARK_TAG_MAX_LENGTH,
-  BOOKMARK_TITLE_MAX_LENGTH,
+  BookmarkTag,
+  BookmarkTitle,
+  BookmarkUrl,
 } from "../../core/bookmark/bookmark.ts";
 import { createAddBookmarkUseCase } from "../../usecase/add-bookmark.ts";
 import { createBookmarkJsonRepository } from "../../gateway/bookmark/json-repository.ts";
 import { join } from "@std/path";
+import z from "zod";
 
 interface AddCommandOptions {
   title?: string;
@@ -15,40 +17,16 @@ interface AddCommandOptions {
   tags?: string;
 }
 
-const validateTitle = (input: string): string | true => {
-  const trimmed = input.trim();
-  if (trimmed.length === 0) {
-    return "Title cannot be empty";
-  }
-  if (trimmed.length > BOOKMARK_TITLE_MAX_LENGTH) {
-    return `Title must be ${BOOKMARK_TITLE_MAX_LENGTH} characters or less`;
-  }
-  return true;
-};
-
-const validateUrl = (input: string): string | true => {
-  try {
-    const url = new URL(input);
-    if (!["http:", "https:"].includes(url.protocol)) {
-      return "URL must use http or https protocol";
-    }
-    return true;
-  } catch {
-    return "Please enter a valid URL";
-  }
-};
-
-const validateTags = (input: string): string | true => {
-  if (input.trim() === "") return true;
-
-  const tags = input.split(",").map((tag) => tag.trim());
-  for (const tag of tags) {
-    if (tag.length === 0) {
-      return "Tags cannot be empty (remove extra commas)";
-    }
-    if (tag.length > BOOKMARK_TAG_MAX_LENGTH) {
-      return `Each tag must be ${BOOKMARK_TAG_MAX_LENGTH} characters or less`;
-    }
+const validateSchema = <
+  T extends Parameters<typeof Result.parse>[0],
+  V,
+  R,
+  U extends (input: V) => R,
+>(schema: T, map?: U) =>
+(input: V) => {
+  const result = Result.parse(schema, (map ?? ((i) => i))(input));
+  if (Result.isFailure(result)) {
+    return result.error.map((e) => e.message).join(",\n");
   }
   return true;
 };
@@ -56,18 +34,18 @@ const validateTags = (input: string): string | true => {
 const promptForMissingInputs = async (options: AddCommandOptions) => {
   const title = options.title ?? await Input.prompt({
     message: "Enter bookmark title:",
-    validate: validateTitle,
+    validate: validateSchema(BookmarkTitle),
   });
 
   const url = options.url ?? await Input.prompt({
     message: "Enter bookmark URL:",
-    validate: validateUrl,
+    validate: validateSchema(BookmarkUrl),
   });
 
   const tags = options.tags ?? await Input.prompt({
     message: "Enter tags (comma-separated, optional):",
     default: "",
-    validate: validateTags,
+    validate: validateSchema(z.array(BookmarkTag), (tags) => tags.split(",")),
   });
 
   return { title, url, tags };
