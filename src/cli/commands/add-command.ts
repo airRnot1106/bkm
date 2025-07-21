@@ -75,7 +75,7 @@ const promptForMissingInputs = async (options: AddCommandOptions) => {
 
 const getDataDirectory = (): string => {
   const homeDir = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "/tmp";
-  return join(homeDir, ".bkm");
+  return join(homeDir, ".local", "share", "bkm");
 };
 
 const saveBookmark = async (title: string, url: string, tags: string) => {
