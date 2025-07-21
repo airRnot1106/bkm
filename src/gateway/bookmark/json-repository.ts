@@ -8,7 +8,7 @@ export const createBookmarkJsonRepository = (
     return Promise.resolve(Result.fail(new Error("Not implemented")));
   },
   findAll() {
-    return Promise.resolve(Result.fail(new Error("Not implemented")));
+    return Promise.resolve(Result.succeed([]));
   },
   findById(_id) {
     return Promise.resolve(Result.fail(new Error("Not implemented")));
