@@ -10,6 +10,7 @@ import { createAddBookmarkUseCase } from "../../usecase/add-bookmark.ts";
 import { createBookmarkJsonRepository } from "../../gateway/bookmark/json-repository.ts";
 import { join } from "@std/path";
 import z from "zod";
+import { FailedCommand, SucceededCommand } from "./types.ts";
 
 interface AddCommandOptions {
   title?: string;
@@ -59,7 +60,11 @@ const getDataDirectory = (): string => {
   return join(homeDir, ".local", "share", "bkm");
 };
 
-const saveBookmark = async (title: string, url: string, tags: string) => {
+const saveBookmark = async (
+  title: string,
+  url: string,
+  tags: string,
+): Promise<Result.ResultAsync<SucceededCommand, FailedCommand>> => {
   const dataDir = getDataDirectory();
   const repository = createBookmarkJsonRepository(dataDir);
   const addBookmark = createAddBookmarkUseCase(repository);
@@ -71,15 +76,18 @@ const saveBookmark = async (title: string, url: string, tags: string) => {
   const result = await addBookmark({ title, url, tags: tagsArray });
 
   if (Result.isSuccess(result)) {
-    console.log("✅ Bookmark added successfully!");
+    return Result.succeed({
+      code: 0,
+      messages: ["✅ Bookmark added successfully!"],
+    });
   } else {
-    console.error("❌ Failed to add bookmark:");
-    if (result.error instanceof Error) {
-      console.error(result.error.message);
-    } else {
-      console.error("Unknown error occurred");
-    }
-    Deno.exit(1);
+    const errorMessage = result.error instanceof Error
+      ? result.error.message
+      : "Unknown error occurred";
+    return Result.fail({
+      code: 1,
+      messages: ["❌ Failed to add bookmark:", errorMessage],
+    });
   }
 };
 
@@ -92,6 +100,13 @@ export const createAddCommand = () => {
     .option("--tags <tags:string>", "Comma-separated tags")
     .action(async (options: AddCommandOptions) => {
       const inputs = await promptForMissingInputs(options);
-      await saveBookmark(inputs.title, inputs.url, inputs.tags);
+      const result = await saveBookmark(inputs.title, inputs.url, inputs.tags);
+
+      if (Result.isSuccess(result)) {
+        result.value.messages.forEach((msg) => console.log(msg));
+      } else {
+        result.error.messages.forEach((msg) => console.error(msg));
+        Deno.exit(result.error.code);
+      }
     });
 };

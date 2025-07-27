@@ -3,6 +3,7 @@ import { Result } from "@praha/byethrow";
 import { createSearchBookmarkUseCase } from "../../usecase/search-bookmark.ts";
 import { createBookmarkJsonRepository } from "../../gateway/bookmark/json-repository.ts";
 import { join } from "@std/path";
+import { FailedCommand, SucceededCommand } from "./types.ts";
 
 const getDataDirectory = (): string => {
   const homeDir = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "/tmp";
@@ -114,7 +115,9 @@ const openInBrowser = (url: string): Result.ResultAsync<void, Error> => {
   })();
 };
 
-const searchBookmarks = async (): Result.ResultAsync<void, Error> => {
+const searchBookmarks = async (): Promise<
+  Result.ResultAsync<SucceededCommand, FailedCommand>
+> => {
   const dataDir = getDataDirectory();
   const repository = createBookmarkJsonRepository(dataDir);
   const searchBookmarksUseCase = createSearchBookmarkUseCase(repository);
@@ -122,13 +125,22 @@ const searchBookmarks = async (): Result.ResultAsync<void, Error> => {
   const result = await searchBookmarksUseCase();
 
   if (Result.isFailure(result)) {
-    return result;
+    const errorMessage = result.error instanceof Error
+      ? result.error.message
+      : "Failed to search bookmarks";
+    return Result.fail({
+      code: 1,
+      messages: ["❌ Search failed:", errorMessage],
+    });
   }
 
   const searchItems = result.value;
 
   if (searchItems.length === 0) {
-    return Result.fail(new Error("No bookmarks found"));
+    return Result.fail({
+      code: 1,
+      messages: ["❌ No bookmarks found"],
+    });
   }
 
   const displayTexts = searchItems.map((item) => item.displayText);
@@ -141,6 +153,13 @@ const searchBookmarks = async (): Result.ResultAsync<void, Error> => {
         throw selectedText.error;
       }
 
+      if (selectedText.value === null) {
+        return {
+          code: 0,
+          messages: [],
+        };
+      }
+
       const selectedItem = searchItems.find((item) =>
         item.displayText === selectedText.value
       );
@@ -149,20 +168,24 @@ const searchBookmarks = async (): Result.ResultAsync<void, Error> => {
         throw new Error("Selected item not found");
       }
 
-      console.log(`🔗 Opening: ${selectedItem.data.url}`);
-      const result = await openInBrowser(selectedItem.data.url);
-      if (Result.isFailure(result)) {
-        throw result.error;
+      const openResult = await openInBrowser(selectedItem.data.url);
+      if (Result.isFailure(openResult)) {
+        throw openResult.error;
       }
+
+      return {
+        code: 0,
+        messages: [`🔗 Opening: ${selectedItem.data.url}`],
+      };
     },
     catch: (error) => {
-      console.error("❌ Search failed:");
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error("Unknown error occurred");
-      }
-      Deno.exit(1);
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Unknown error occurred";
+      return {
+        code: 1,
+        messages: ["❌ Search failed:", errorMessage],
+      };
     },
   })();
 };
@@ -172,6 +195,13 @@ export const createSearchCommand = () => {
     .name("search")
     .description("Search and open bookmarks with fuzzy finder")
     .action(async () => {
-      await searchBookmarks();
+      const result = await searchBookmarks();
+
+      if (Result.isSuccess(result)) {
+        result.value.messages.forEach((msg) => console.log(msg));
+      } else {
+        result.error.messages.forEach((msg) => console.error(msg));
+        Deno.exit(result.error.code);
+      }
     });
 };
