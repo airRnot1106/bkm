@@ -528,6 +528,12 @@
     url = "https://registry.npmjs.org/ansi-styles/-/ansi-styles-6.2.1.tgz";
     hash = "sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==";
   };
+  "args-tokens" = {
+    out_path = "args-tokens";
+    name = "args-tokens@0.20.1";
+    url = "https://registry.npmjs.org/args-tokens/-/args-tokens-0.20.1.tgz";
+    hash = "sha512-pQ5R5TsJyx94zsgSCCQ9kzOgUfMmI4bkqNjgSSt2C92mzPCvovoUMMW6HqR+35mHZ0cb1++MD2uAOLm62sGC+Q==";
+  };
   "assertion-error" = {
     out_path = "assertion-error";
     name = "assertion-error@2.0.1";
@@ -689,6 +695,12 @@
     name = "glob@10.4.5";
     url = "https://registry.npmjs.org/glob/-/glob-10.4.5.tgz";
     hash = "sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==";
+  };
+  "gunshi" = {
+    out_path = "gunshi";
+    name = "gunshi@0.26.3";
+    url = "https://registry.npmjs.org/gunshi/-/gunshi-0.26.3.tgz";
+    hash = "sha512-x/CaxovzDA3KMkrjqow7M1dnsO1CxGMNabBaeGTGdVNtjOMN1G/eK7vjKeJ+zHdFIsWHmo47YQ2DQIESUut2+A==";
   };
   "has-flag" = {
     out_path = "has-flag";
