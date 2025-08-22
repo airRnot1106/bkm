@@ -1,5 +1,7 @@
 {
-  "name": "default-bun-app",
+  "name": "bkm",
+  "description": "Bookmark manager CLI",
+  "version": "0.0.1",
   "scripts": {
     "postinstall": "bun2nix -o bun.nix",
     "check": "biome check --write ."

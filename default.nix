@@ -1,6 +1,6 @@
 { mkBunDerivation, ... }:
 mkBunDerivation {
-  pname = "default-bun-app";
+  pname = "bkm";
   version = "0.0.1";
 
   src = ./.;

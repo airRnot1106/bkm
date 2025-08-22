@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "default-bun-app",
+      "name": "bkm",
       "dependencies": {
         "@praha/byethrow": "^0.6.3",
         "consola": "^3.4.2",
