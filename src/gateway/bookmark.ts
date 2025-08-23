@@ -103,6 +103,20 @@ export const createBookmarkJsonRepository = (
         }),
       );
     },
+    async findById(bookmarkId) {
+      return Result.pipe(
+        Result.do(),
+        Result.andThen(repository.findAll),
+        Result.map((bookmarks) =>
+          bookmarks.find((bookmark) => bookmark.id === bookmarkId),
+        ),
+        Result.andThen((bookmark) =>
+          bookmark != null
+            ? Result.succeed(bookmark)
+            : Result.fail(new Error('Bookmark not found')),
+        ),
+      );
+    },
   };
   return repository;
 };

@@ -77,6 +77,7 @@ export interface IBookmarkRepository {
   update(bookmark: Bookmark): Result.ResultAsync<void, Error>;
   delete(id: BookmarkId): Result.ResultAsync<void, Error>;
   findAll(): Result.ResultAsync<Bookmark[], Error>;
+  findById(id: BookmarkId): Result.ResultAsync<Bookmark, Error>;
 }
 
 /* Fake Data Generators */

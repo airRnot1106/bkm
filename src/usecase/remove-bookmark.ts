@@ -19,6 +19,7 @@ if (import.meta.vitest) {
           update: vi.fn(),
           delete: vi.fn().mockReturnValue(Result.succeed(undefined)),
           findAll: vi.fn(),
+          findById: vi.fn(),
         };
 
         const removeBookmark = createRemoveBookmarkUseCase(
@@ -44,6 +45,7 @@ if (import.meta.vitest) {
             update: vi.fn(),
             delete: vi.fn().mockReturnValue(Result.fail(deleteError)),
             findAll: vi.fn(),
+            findById: vi.fn(),
           };
 
           const removeBookmark = createRemoveBookmarkUseCase(
@@ -67,6 +69,7 @@ if (import.meta.vitest) {
           update: vi.fn(),
           delete: vi.fn().mockReturnValue(Result.succeed(undefined)),
           findAll: vi.fn(),
+          findById: vi.fn(),
         };
 
         const removeBookmark = createRemoveBookmarkUseCase(
@@ -79,6 +82,7 @@ if (import.meta.vitest) {
         expect(mockBookmarkRepository.insert).not.toHaveBeenCalled();
         expect(mockBookmarkRepository.update).not.toHaveBeenCalled();
         expect(mockBookmarkRepository.findAll).not.toHaveBeenCalled();
+        expect(mockBookmarkRepository.findById).not.toHaveBeenCalled();
       }),
     );
   });

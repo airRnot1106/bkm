@@ -56,6 +56,7 @@ if (import.meta.vitest) {
             update: vi.fn(),
             delete: vi.fn(),
             findAll: vi.fn(),
+            findById: vi.fn(),
           };
 
           const addBookmark = createAddBookmarkUseCase(mockBookmarkRepository);
@@ -91,6 +92,7 @@ if (import.meta.vitest) {
             update: vi.fn(),
             delete: vi.fn(),
             findAll: vi.fn(),
+            findById: vi.fn(),
           };
 
           const addBookmark = createAddBookmarkUseCase(mockBookmarkRepository);
@@ -125,6 +127,7 @@ if (import.meta.vitest) {
             update: vi.fn(),
             delete: vi.fn(),
             findAll: vi.fn(),
+            findById: vi.fn(),
           };
 
           const addBookmark = createAddBookmarkUseCase(mockBookmarkRepository);
