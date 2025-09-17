@@ -300,6 +300,12 @@
     url = "https://registry.npmjs.org/@praha/byethrow/-/byethrow-0.6.3.tgz";
     hash = "sha512-WeHnDRzan8Zx4Lj3wCKy88K0zFZqnGKBho2QuTAM94yutkLDOsDSIYDbu/OXgnc+bQnnomCOteJNtE53o7l+Zw==";
   };
+  "@praha/error-factory" = {
+    out_path = "@praha/error-factory";
+    name = "@praha/error-factory@1.2.0";
+    url = "https://registry.npmjs.org/@praha/error-factory/-/error-factory-1.2.0.tgz";
+    hash = "sha512-mmixNZY6ZJZsioFiQ4U2HRqRwAEMC6KHlaowDl/vVR8h09KFpVs2vLh3ln8MntJgLeKBe8v3e+SeY4mDfx98uA==";
+  };
   "@rollup/rollup-android-arm-eabi" = {
     out_path = "@rollup/rollup-android-arm-eabi";
     name = "@rollup/rollup-android-arm-eabi@4.46.2";

@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@praha/byethrow": "^0.6.3",
+    "@praha/error-factory": "^1.2.0",
     "consola": "^3.4.2",
     "date-fns": "^4.1.0",
     "gunshi": "^0.26.3",

@@ -5,6 +5,7 @@
       "name": "bkm",
       "dependencies": {
         "@praha/byethrow": "^0.6.3",
+        "@praha/error-factory": "^1.2.0",
         "consola": "^3.4.2",
         "date-fns": "^4.1.0",
         "gunshi": "^0.26.3",
@@ -121,6 +122,8 @@
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
     "@praha/byethrow": ["@praha/byethrow@0.6.3", "", { "dependencies": { "@standard-schema/spec": "^1.0.0" } }, "sha512-WeHnDRzan8Zx4Lj3wCKy88K0zFZqnGKBho2QuTAM94yutkLDOsDSIYDbu/OXgnc+bQnnomCOteJNtE53o7l+Zw=="],
+
+    "@praha/error-factory": ["@praha/error-factory@1.2.0", "", {}, "sha512-mmixNZY6ZJZsioFiQ4U2HRqRwAEMC6KHlaowDl/vVR8h09KFpVs2vLh3ln8MntJgLeKBe8v3e+SeY4mDfx98uA=="],
 
     "@rollup/rollup-android-arm-eabi": ["@rollup/rollup-android-arm-eabi@4.46.2", "", { "os": "android", "cpu": "arm" }, "sha512-Zj3Hl6sN34xJtMv7Anwb5Gu01yujyE/cLBDB2gnHTAHaWS1Z38L7kuSG+oAh0giZMqG060f/YBStXtMH6FvPMA=="],
 
