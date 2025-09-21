@@ -1,4 +1,6 @@
 import type { Result } from '@praha/byethrow';
+import { ErrorFactory } from '@praha/error-factory';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 import fc from 'fast-check';
 import z from 'zod';
 
@@ -116,6 +118,15 @@ export const Bookmark = z
   .brand<typeof BookmarkBrand>();
 
 export type Bookmark = z.infer<typeof Bookmark>;
+
+export class BookmarkParseError extends ErrorFactory({
+  name: 'BookmarkParseError',
+  message: ({ issues }) =>
+    `Failed to parse Bookmark: ${issues
+      .map((issue) => issue.message)
+      .join(', ')}`,
+  fields: ErrorFactory.fields<{ issues: readonly StandardSchemaV1.Issue[] }>(),
+}) {}
 
 const fakeValidBookmarkRecord = {
   id: fakeValidBookmarkIdGenerator,
