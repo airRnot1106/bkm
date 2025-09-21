@@ -168,3 +168,97 @@ export interface IBookmarkRepository {
   findAll(): Result.ResultAsync<Bookmark[], Error>;
   findById(id: BookmarkId): Result.ResultAsync<Bookmark, Error>;
 }
+
+if (import.meta.vitest) {
+  const { test, expect, describe } = import.meta.vitest;
+
+  describe('BookmarkId', () => {
+    test('valid uuid v4 should be valid', () => {
+      fc.assert(
+        fc.property(fakeValidBookmarkIdGenerator, (validId) => {
+          expect(() => BookmarkId.parse(validId)).not.toThrow();
+        }),
+      );
+    });
+
+    test('invalid uuid should throw error', () => {
+      fc.assert(
+        fc.property(fakeInvalidBookmarkIdGenerator, (invalidId) => {
+          expect(() => BookmarkId.parse(invalidId)).toThrow();
+        }),
+      );
+    });
+  });
+
+  describe('BookmarkTitle', () => {
+    test('valid title should be valid', () => {
+      fc.assert(
+        fc.property(fakeValidBookmarkTitleGenerator, (validTitle) => {
+          expect(() => BookmarkTitle.parse(validTitle)).not.toThrow();
+        }),
+      );
+    });
+
+    test('invalid title should throw error', () => {
+      fc.assert(
+        fc.property(fakeInvalidBookmarkTitleGenerator, (invalidTitle) => {
+          expect(() => BookmarkTitle.parse(invalidTitle)).toThrow();
+        }),
+      );
+    });
+  });
+
+  describe('BookmarkUrl', () => {
+    test('valid url should be valid', () => {
+      fc.assert(
+        fc.property(fakeValidBookmarkUrlGenerator, (validUrl) => {
+          expect(() => BookmarkUrl.parse(validUrl)).not.toThrow();
+        }),
+      );
+    });
+
+    test('invalid url should throw error', () => {
+      fc.assert(
+        fc.property(fakeInvalidBookmarkUrlGenerator, (invalidUrl) => {
+          expect(() => BookmarkUrl.parse(invalidUrl)).toThrow();
+        }),
+      );
+    });
+  });
+
+  describe('BookmarkTag', () => {
+    test('valid tag should be valid', () => {
+      fc.assert(
+        fc.property(fakeValidBookmarkTagGenerator, (validTag) => {
+          expect(() => BookmarkTag.parse(validTag)).not.toThrow();
+        }),
+      );
+    });
+
+    test('invalid tag should throw error', () => {
+      fc.assert(
+        fc.property(fakeInvalidBookmarkTagGenerator, (invalidTag) => {
+          expect(() => BookmarkTag.parse(invalidTag)).toThrow();
+        }),
+      );
+    });
+  });
+
+  describe('Bookmark', () => {
+    test('valid bookmark should be valid', () => {
+      fc.assert(
+        fc.property(fakeValidBookmarkGenerator, (validBookmark) => {
+          expect(() => Bookmark.parse(validBookmark)).not.toThrow();
+        }),
+      );
+    });
+
+    test('invalid bookmark should throw error', () => {
+      fc.assert(
+        fc.property(fakeInvalidBookmarkGenerator, (invalidBookmark) => {
+          expect(() => Bookmark.parse(invalidBookmark)).toThrow();
+        }),
+      );
+    });
+  });
+}
