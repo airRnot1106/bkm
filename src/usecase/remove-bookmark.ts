@@ -5,16 +5,11 @@ import {
   fakeValidBookmarkIdGenerator,
   type IBookmarkRepository,
 } from '../core/bookmark';
-import { UnexpectedError } from '../utils';
 
 export const createRemoveBookmarkUseCase =
   (bookmarkRepository: IBookmarkRepository) =>
   ({ id }: { id: BookmarkId }) =>
-    Result.pipe(
-      Result.succeed(id),
-      Result.andThen(bookmarkRepository.delete),
-      Result.mapError((error) => new UnexpectedError({ cause: error })),
-    );
+    Result.pipe(Result.succeed(id), Result.andThen(bookmarkRepository.delete));
 
 if (import.meta.vitest) {
   const { test, expect, describe, vi } = import.meta.vitest;

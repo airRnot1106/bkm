@@ -48,7 +48,7 @@ export const createUpdateBookmarkUseCase =
       Result.andThen(bookmarkRepository.update),
       Result.mapError((error) => {
         if (error instanceof Error) {
-          return new UnexpectedError({ cause: error });
+          return error;
         }
         return new UnexpectedError({
           cause: new BookmarkParseError({ issues: error }),

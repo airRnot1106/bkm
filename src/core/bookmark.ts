@@ -3,6 +3,7 @@ import { ErrorFactory } from '@praha/error-factory';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import fc from 'fast-check';
 import z from 'zod';
+import type { FileSystemError, UnexpectedError } from '../utils';
 
 /* BookmarkId */
 
@@ -173,11 +174,19 @@ export const fakeInvalidBookmarkGenerator = fc.oneof(
 /* IBookmarkRepository */
 
 export interface IBookmarkRepository {
-  insert(bookmark: Bookmark): Result.ResultAsync<void, Error>;
-  update(bookmark: Bookmark): Result.ResultAsync<void, Error>;
-  delete(id: BookmarkId): Result.ResultAsync<void, Error>;
-  findAll(): Result.ResultAsync<Bookmark[], Error>;
-  findById(id: BookmarkId): Result.ResultAsync<Bookmark, Error>;
+  insert(
+    bookmark: Bookmark,
+  ): Result.ResultAsync<void, FileSystemError | UnexpectedError>;
+  update(
+    bookmark: Bookmark,
+  ): Result.ResultAsync<void, FileSystemError | UnexpectedError>;
+  delete(
+    id: BookmarkId,
+  ): Result.ResultAsync<void, FileSystemError | UnexpectedError>;
+  findAll(): Result.ResultAsync<Bookmark[], FileSystemError | UnexpectedError>;
+  findById(
+    id: BookmarkId,
+  ): Result.ResultAsync<Bookmark, FileSystemError | UnexpectedError>;
 }
 
 if (import.meta.vitest) {

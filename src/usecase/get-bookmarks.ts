@@ -2,15 +2,10 @@ import { Result } from '@praha/byethrow';
 import fc from 'fast-check';
 import type { IBookmarkRepository } from '../core/bookmark';
 import { fakeValidBookmarkGenerator } from '../core/bookmark';
-import { UnexpectedError } from '../utils';
 
 export const createGetBookmarksUseCase =
   (bookmarkRepository: IBookmarkRepository) => () =>
-    Result.pipe(
-      Result.do(),
-      Result.andThen(bookmarkRepository.findAll),
-      Result.mapError((error) => new UnexpectedError({ cause: error })),
-    );
+    Result.pipe(Result.do(), Result.andThen(bookmarkRepository.findAll));
 
 if (import.meta.vitest) {
   const { test, expect, describe, vi } = import.meta.vitest;
