@@ -129,6 +129,12 @@ export class BookmarkParseError extends ErrorFactory({
   fields: ErrorFactory.fields<{ issues: readonly StandardSchemaV1.Issue[] }>(),
 }) {}
 
+export class BookmarkNotFoundError extends ErrorFactory({
+  name: 'BookmarkNotFoundError',
+  message: ({ id }) => `Bookmark not found: ${id}`,
+  fields: ErrorFactory.fields<{ id: BookmarkId }>(),
+}) {}
+
 const fakeValidBookmarkRecord = {
   id: fakeValidBookmarkIdGenerator,
   title: fakeValidBookmarkTitleGenerator,
@@ -174,19 +180,11 @@ export const fakeInvalidBookmarkGenerator = fc.oneof(
 /* IBookmarkRepository */
 
 export interface IBookmarkRepository {
-  insert(
-    bookmark: Bookmark,
-  ): Result.ResultAsync<void, FileSystemError | UnexpectedError>;
-  update(
-    bookmark: Bookmark,
-  ): Result.ResultAsync<void, FileSystemError | UnexpectedError>;
-  delete(
-    id: BookmarkId,
-  ): Result.ResultAsync<void, FileSystemError | UnexpectedError>;
-  findAll(): Result.ResultAsync<Bookmark[], FileSystemError | UnexpectedError>;
-  findById(
-    id: BookmarkId,
-  ): Result.ResultAsync<Bookmark, FileSystemError | UnexpectedError>;
+  insert(bookmark: Bookmark): Result.ResultAsync<void, Error>;
+  update(bookmark: Bookmark): Result.ResultAsync<void, Error>;
+  delete(id: BookmarkId): Result.ResultAsync<void, Error>;
+  findAll(): Result.ResultAsync<Bookmark[], Error>;
+  findById(id: BookmarkId): Result.ResultAsync<Bookmark, Error>;
 }
 
 if (import.meta.vitest) {
