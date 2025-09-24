@@ -58,16 +58,17 @@ export const readFile = (filePath: string) =>
     },
   });
 
-export const ensureFileExists = (filePath: string) => () =>
-  Result.pipe(
-    Result.succeed(filePath),
-    Result.map((filePath) => ({ dirPath: dirname(filePath), filePath })),
-    Result.andThen(({ dirPath, filePath }) =>
-      Result.pipe(
-        Result.do(),
-        Result.andThen(mkdir(dirPath)),
-        Result.andThen(() => Result.succeed('')),
-        Result.andThen(writeFile(filePath)),
-      ),
-    ),
+export const ensureFileExists = (filePath: string) => async () => {
+  if (Result.isSuccess(await readFile(filePath)())) {
+    return Result.succeed();
+  }
+
+  const dirPath = dirname(filePath);
+
+  return Result.pipe(
+    Result.do(),
+    Result.andThrough(mkdir(dirPath)),
+    Result.andThen(() => Result.succeed(JSON.stringify([], null, 2))),
+    Result.andThrough(writeFile(filePath)),
   );
+};

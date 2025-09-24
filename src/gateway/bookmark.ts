@@ -102,6 +102,7 @@ export const createBookmarkJsonRepository = (
     async findAll() {
       return Result.pipe(
         Result.do(),
+        Result.andThrough(ensureFileExists(bookmarkPath)),
         Result.andThen(readFile(bookmarkPath)),
         Result.map(JSON.parse),
         Result.andThen(bookmarkMapper.fromDTOs),
@@ -116,6 +117,7 @@ export const createBookmarkJsonRepository = (
     async findById(bookmarkId) {
       return Result.pipe(
         Result.do(),
+        Result.andThrough(ensureFileExists(bookmarkPath)),
         Result.andThen(repository.findAll),
         Result.map((bookmarks) =>
           bookmarks.find((bookmark) => bookmark.id === bookmarkId),
