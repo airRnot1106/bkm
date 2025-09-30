@@ -1,4 +1,5 @@
 import { Result } from '@praha/byethrow';
+import consola from 'consola';
 import { define } from 'gunshi';
 import z from 'zod';
 import { BookmarkTag, BookmarkTitle, BookmarkUrl } from '../../core/bookmark';
@@ -19,10 +20,12 @@ const add = define({
           Result.pipe(
             Result.succeed(input),
             Result.andThen(Result.parse(BookmarkTitle)),
-            Result.mapError(
-              (errors) =>
-                new Error(`title:\n${errors.map((e) => e.message).join('\n')}`),
+            Result.inspectError((errors) =>
+              consola.error(
+                `title: ${errors.map((e) => e.message).join(', ')}`,
+              ),
             ),
+            Result.mapError(() => new Error(``)),
           ),
         ),
     },
@@ -35,10 +38,10 @@ const add = define({
           Result.pipe(
             Result.succeed(input),
             Result.andThen(Result.parse(BookmarkUrl)),
-            Result.mapError(
-              (errors) =>
-                new Error(`url:\n${errors.map((e) => e.message).join('\n')}`),
+            Result.inspectError((errors) =>
+              consola.error(`url: ${errors.map((e) => e.message).join(', ')}`),
             ),
+            Result.mapError(() => new Error()),
           ),
         ),
     },
@@ -51,10 +54,10 @@ const add = define({
             Result.succeed(input),
             Result.map((str) => str.split(',')),
             Result.andThen(Result.parse(BookmarkTag.array())),
-            Result.mapError(
-              (errors) =>
-                new Error(`tags:\n${errors.map((e) => e.message).join('\n')}`),
+            Result.inspectError((errors) =>
+              consola.error(`tags: ${errors.map((e) => e.message).join(', ')}`),
             ),
+            Result.mapError(() => new Error()),
           ),
         ),
     },
