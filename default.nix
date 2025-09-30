@@ -1,11 +1,9 @@
 { mkBunDerivation, ... }:
 mkBunDerivation {
-  pname = "bkm";
-  version = "0.0.1";
+  packageJson = ./package.json;
 
   src = ./.;
 
   bunNix = ./bun.nix;
 
-  index = "src/index.ts";
 }
