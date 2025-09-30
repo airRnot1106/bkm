@@ -1,17 +1,20 @@
-import consola from 'consola';
 import { type Args, type CliOptions, cli, define } from 'gunshi';
 import { description, name, version } from '../../package.json';
 import add from './commands/add';
+import search from './commands/search';
 
 const main = define({
-  name,
-  description,
-  run: () => {
-    consola.info('Hello, World');
+  name: 'search',
+  description: 'Search bookmarks',
+  run: async (ctx) => {
+    await search.run?.(ctx);
   },
 });
 
-const subCommands = new Map([['add', add]]);
+const subCommands = new Map([
+  ['add', add],
+  ['search', search],
+]);
 
 const renderHeader: CliOptions<Args>['renderHeader'] = async ({
   env: { name, version },
