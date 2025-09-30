@@ -6,4 +6,9 @@ mkBunDerivation {
 
   bunNix = ./bun.nix;
 
+  buildFlags = [
+    "--compile"
+    "--minify"
+    "--sourcemap"
+  ];
 }
