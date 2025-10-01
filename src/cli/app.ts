@@ -1,6 +1,7 @@
 import { type Args, type CliOptions, cli, define } from 'gunshi';
 import { description, name, version } from '../../package.json';
 import add from './commands/add';
+import remove from './commands/remove';
 import search from './commands/search';
 
 const main = define({
@@ -13,6 +14,7 @@ const main = define({
 
 const subCommands = new Map([
   ['add', add],
+  ['remove', remove],
   ['search', search],
 ]);
 
