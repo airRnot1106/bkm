@@ -13,7 +13,6 @@ func TestNewBookmarkID_ValidUUIDsAlwaysSucceed(t *testing.T) {
 	uuid := uuid.New()
 
 	bookmarkID, err := bookmark.NewBookmarkID(uuid.String())
-
 	if err != nil {
 		t.Fatalf("valid UUID %q should succeed, got error: %v", uuid, err)
 	}
@@ -57,7 +56,6 @@ func TestNewBookmarkURL_ValidURLsAlwaysSucceed(t *testing.T) {
 		rawURL := scheme + "://" + host + path
 
 		bookmarkURL, err := bookmark.NewBookmarkURL(rawURL)
-
 		if err != nil {
 			t.Fatalf("valid URL %q should succeed, got error: %v", rawURL, err)
 		}
@@ -117,7 +115,6 @@ func TestNewBookmarkTitle_ValidTitlesAlwaysSucceed(t *testing.T) {
 		}).Draw(t, "title")
 
 		bookmarkTitle, err := bookmark.NewBookmarkTitle(title)
-
 		if err != nil {
 			t.Fatalf("valid title %q should succeed, got error: %v", title,
 				err)
@@ -166,7 +163,6 @@ func TestNewBookmarkTag_ValidTagsAlwaysSucceed(t *testing.T) {
 		}).Draw(t, "tag")
 
 		bookmarkTag, err := bookmark.NewBookmarkTag(tag)
-
 		if err != nil {
 			t.Fatalf("valid tag %q should succeed, got error: %v", tag, err)
 		}
