@@ -12,6 +12,10 @@ type BookmarkID struct {
 	value string
 }
 
+func (i BookmarkID) Value() string {
+	return i.value
+}
+
 func NewBookmarkID(id string) (BookmarkID, error) {
 	if _, err := uuid.Parse(id); err != nil {
 		return BookmarkID{}, errors.New("invalid UUID format")
@@ -23,12 +27,12 @@ func GenerateBookmarkID() BookmarkID {
 	return BookmarkID{value: uuid.New().String()}
 }
 
-func (i BookmarkID) Value() string {
-	return i.value
-}
-
 type BookmarkURL struct {
 	value string
+}
+
+func (u BookmarkURL) Value() string {
+	return u.value
 }
 
 func NewBookmarkURL(rawURL string) (BookmarkURL, error) {
@@ -44,12 +48,12 @@ func NewBookmarkURL(rawURL string) (BookmarkURL, error) {
 	return BookmarkURL{value: rawURL}, nil
 }
 
-func (u BookmarkURL) Value() string {
-	return u.value
-}
-
 type BookmarkTitle struct {
 	value string
+}
+
+func (t BookmarkTitle) Value() string {
+	return t.value
 }
 
 func NewBookmarkTitle(title string) (BookmarkTitle, error) {
@@ -62,12 +66,12 @@ func NewBookmarkTitle(title string) (BookmarkTitle, error) {
 	return BookmarkTitle{value: trimmed}, nil
 }
 
-func (t BookmarkTitle) Value() string {
-	return t.value
-}
-
 type BookmarkDescription struct {
 	value string
+}
+
+func (d BookmarkDescription) Value() string {
+	return d.value
 }
 
 func NewBookmarkDescription(description string) BookmarkDescription {
@@ -76,12 +80,12 @@ func NewBookmarkDescription(description string) BookmarkDescription {
 	return BookmarkDescription{value: trimmed}
 }
 
-func (d BookmarkDescription) Value() string {
-	return d.value
-}
-
 type BookmarkTag struct {
 	value string
+}
+
+func (t BookmarkTag) Value() string {
+	return t.value
 }
 
 func NewBookmarkTag(tag string) (BookmarkTag, error) {
@@ -92,8 +96,4 @@ func NewBookmarkTag(tag string) (BookmarkTag, error) {
 	}
 
 	return BookmarkTag{value: trimmed}, nil
-}
-
-func (t BookmarkTag) Value() string {
-	return t.value
 }
