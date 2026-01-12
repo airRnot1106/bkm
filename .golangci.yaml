@@ -1,0 +1,77 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  default: standard
+
+  enable:
+    - gosec
+    - gocyclo
+    - goconst
+    - misspell
+    - unconvert
+    - unparam
+
+  settings:
+    errcheck:
+      check-blank: true
+      check-type-assertions: true
+
+    govet:
+      enable-all: false
+      enable:
+        - assign
+        - atomic
+        - bools
+        - composites
+        - copylocks
+        - errorsas
+        - httpresponse
+        - loopclosure
+        - lostcancel
+        - nilfunc
+        - printf
+        - shadow
+        - shift
+        - structtag
+        - tests
+        - unmarshal
+        - unreachable
+        - unusedresult
+
+    gocyclo:
+      min-complexity: 15
+
+    gosec:
+      excludes:
+        - G204
+
+  exclusions:
+    rules:
+      - path: '_test\.go'
+        linters:
+          - errcheck
+          - gosec
+          - unparam
+          - gocyclo
+
+      - path: 'cmd/'
+        linters:
+          - gosec
+
+      - path: '\.pb\.go$'
+        linters:
+          - all
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+output:
+  formats:
+    text:
+      print-linter-name: true

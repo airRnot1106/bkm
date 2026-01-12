@@ -15,5 +15,6 @@
 # vendor/
 
 .direnv
+.pre-commit-config.yaml
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Go,direnv,nix
