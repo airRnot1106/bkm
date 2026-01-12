@@ -42,6 +42,7 @@
             packages = with pkgs; [
               cobra-cli
               go
+              gofumpt
               golangci-lint
               gopls
               gotest
@@ -54,7 +55,7 @@
         treefmt-nix.lib.mkWrapper pkgs {
           projectRootFile = "flake.nix";
           programs = {
-            gofmt.enable = true;
+            gofumpt.enable = true;
             nixfmt.enable = true;
           };
         }
