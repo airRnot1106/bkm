@@ -3,6 +3,7 @@ package bookmark
 import (
 	"errors"
 	"net/url"
+	"strings"
 )
 
 type BookmarkURL struct {
@@ -24,4 +25,22 @@ func NewBookmarkURL(rawURL string) (BookmarkURL, error) {
 
 func (u BookmarkURL) Value() string {
 	return u.value
+}
+
+type BookmarkTitle struct {
+	value string
+}
+
+func NewBookmarkTitle(title string) (BookmarkTitle, error) {
+	trimmed := strings.TrimSpace(title)
+
+	if trimmed == "" {
+		return BookmarkTitle{}, errors.New("title cannot be empty")
+	}
+
+	return BookmarkTitle{value: trimmed}, nil
+}
+
+func (t BookmarkTitle) Value() string {
+	return t.value
 }

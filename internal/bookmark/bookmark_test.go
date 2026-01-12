@@ -1,6 +1,7 @@
 package bookmark_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/airRnot1106/bkm/internal/bookmark"
@@ -65,6 +66,40 @@ func TestNewBookmarkURL_NoHostAlwaysFails(t *testing.T) {
 
 		if err == nil {
 			t.Fatalf("URL without host %q should fail", rawURL)
+		}
+	})
+}
+
+func TestNewBookmarkTitle_ValidTitlesAlwaysSucceed(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		title := rapid.String().Filter(func(s string) bool {
+			return strings.TrimSpace(s) != ""
+		}).Draw(t, "title")
+
+		bookmarkTitle, err := bookmark.NewBookmarkTitle(title)
+
+		if err != nil {
+			t.Fatalf("valid title %q should succeed, got error: %v", title,
+				err)
+		}
+
+		trimmed := strings.TrimSpace(title)
+
+		if bookmarkTitle.Value() != trimmed {
+			t.Fatalf("title value should be preserved: expected %q, got %q",
+				title, bookmarkTitle.Value())
+		}
+	})
+}
+
+func TestNewBookmarkTitle_EmptyOrWhitespaceOnlyAlwaysFails(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		title := rapid.StringMatching(`\s*`).Draw(t, "title")
+
+		_, err := bookmark.NewBookmarkTitle(title)
+
+		if err == nil {
+			t.Fatalf("empty or whitespace-only title %q should fail", title)
 		}
 	})
 }
