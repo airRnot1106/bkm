@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -96,4 +97,32 @@ func NewBookmarkTag(tag string) (BookmarkTag, error) {
 	}
 
 	return BookmarkTag{value: trimmed}, nil
+}
+
+type Bookmark struct {
+	ID          BookmarkID
+	URL         BookmarkURL
+	Title       BookmarkTitle
+	Description BookmarkDescription
+	Tags        []BookmarkTag
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+func NewBookmark(id BookmarkID, url BookmarkURL, title BookmarkTitle, description BookmarkDescription, tags []BookmarkTag, createdAt time.Time, updatedAt time.Time) Bookmark {
+	return Bookmark{
+		ID:          id,
+		URL:         url,
+		Title:       title,
+		Description: description,
+		Tags:        tags,
+		CreatedAt:   createdAt,
+		UpdatedAt:   updatedAt,
+	}
+}
+
+func CreateBookmark(url BookmarkURL, title BookmarkTitle, description BookmarkDescription, tags []BookmarkTag) Bookmark {
+	id := GenerateBookmarkID()
+	now := time.Now()
+	return NewBookmark(id, url, title, description, tags, now, now)
 }

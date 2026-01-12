@@ -3,6 +3,7 @@ package bookmark_test
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/airRnot1106/bkm/internal/bookmark"
 	"github.com/google/uuid"
@@ -184,6 +185,127 @@ func TestNewBookmarkTag_EmptyOrWhitespaceOnlyAlwaysFails(t *testing.T) {
 
 		if err == nil {
 			t.Fatalf("empty or whitespace-only tag %q should fail", tag)
+		}
+	})
+}
+
+func TestBookmark_ValidBookmarkAlwaysSucceeds(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		uuid := uuid.New()
+		bookmarkID, _ := bookmark.NewBookmarkID(uuid.String())
+
+		scheme := rapid.SampledFrom([]string{"http", "https", "ftp"}).Draw(t,
+			"scheme")
+		host := rapid.StringMatching(`[a-zA-Z0-9.-]+`).Draw(t, "host")
+		path := rapid.StringMatching(`(/[a-zA-Z0-9._-]+)*`).Draw(t, "path")
+		rawURL := scheme + "://" + host + path
+		bookmarkURL, _ := bookmark.NewBookmarkURL(rawURL)
+
+		title := rapid.String().Filter(func(s string) bool {
+			return strings.TrimSpace(s) != ""
+		}).Draw(t, "title")
+		bookmarkTitle, _ := bookmark.NewBookmarkTitle(title)
+
+		description := rapid.String().Draw(t, "description")
+		bookmarkDescription := bookmark.NewBookmarkDescription(description)
+
+		tagsCount := rapid.IntRange(0, 5).Draw(t, "tagsCount")
+		var bookmarkTags []bookmark.BookmarkTag
+		for range tagsCount {
+			tag := rapid.String().Filter(func(s string) bool {
+				return strings.TrimSpace(s) != ""
+			}).Draw(t, "tag")
+			bookmarkTag, _ := bookmark.NewBookmarkTag(tag)
+			bookmarkTags = append(bookmarkTags, bookmarkTag)
+		}
+
+		now := time.Now()
+
+		bm := bookmark.NewBookmark(
+			bookmarkID,
+			bookmarkURL,
+			bookmarkTitle,
+			bookmarkDescription,
+			bookmarkTags,
+			now,
+			now,
+		)
+
+		if bm.ID.Value() != bookmarkID.Value() {
+			t.Fatalf("ID should match: expected %q, got %q", bookmarkID.Value(), bm.ID.Value())
+		}
+		if bm.URL.Value() != bookmarkURL.Value() {
+			t.Fatalf("URL should match: expected %q, got %q", bookmarkURL.Value(), bm.URL.Value())
+		}
+		if bm.Title.Value() != bookmarkTitle.Value() {
+			t.Fatalf("Title should match: expected %q, got %q", bookmarkTitle.Value(), bm.Title.Value())
+		}
+		if bm.Description.Value() != bookmarkDescription.Value() {
+			t.Fatalf("Description should match: expected %q, got %q", bookmarkDescription.Value(), bm.Description.Value())
+		}
+		if len(bm.Tags) != len(bookmarkTags) {
+			t.Fatalf("Tags length should match: expected %d, got %d", len(bookmarkTags), len(bm.Tags))
+		}
+		if bm.CreatedAt != now {
+			t.Fatalf("CreatedAt should match: expected %v, got %v", now, bm.CreatedAt)
+		}
+		if bm.UpdatedAt != now {
+			t.Fatalf("UpdatedAt should match: expected %v, got %v", now, bm.UpdatedAt)
+		}
+	})
+}
+
+func TestCreateBookmark_ValidInputAlwaysSucceeds(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		scheme := rapid.SampledFrom([]string{"http", "https", "ftp"}).Draw(t,
+			"scheme")
+		host := rapid.StringMatching(`[a-zA-Z0-9.-]+`).Draw(t, "host")
+		path := rapid.StringMatching(`(/[a-zA-Z0-9._-]+)*`).Draw(t, "path")
+		rawURL := scheme + "://" + host + path
+		bookmarkURL, _ := bookmark.NewBookmarkURL(rawURL)
+
+		title := rapid.String().Filter(func(s string) bool {
+			return strings.TrimSpace(s) != ""
+		}).Draw(t, "title")
+		bookmarkTitle, _ := bookmark.NewBookmarkTitle(title)
+
+		description := rapid.String().Draw(t, "description")
+		bookmarkDescription := bookmark.NewBookmarkDescription(description)
+
+		tagsCount := rapid.IntRange(0, 5).Draw(t, "tagsCount")
+		var bookmarkTags []bookmark.BookmarkTag
+		for range tagsCount {
+			tag := rapid.String().Filter(func(s string) bool {
+				return strings.TrimSpace(s) != ""
+			}).Draw(t, "tag")
+			bookmarkTag, _ := bookmark.NewBookmarkTag(tag)
+			bookmarkTags = append(bookmarkTags, bookmarkTag)
+		}
+
+		bm := bookmark.CreateBookmark(
+			bookmarkURL,
+			bookmarkTitle,
+			bookmarkDescription,
+			bookmarkTags,
+		)
+
+		if bm.URL.Value() != bookmarkURL.Value() {
+			t.Fatalf("URL should match: expected %q, got %q", bookmarkURL.Value(), bm.URL.Value())
+		}
+		if bm.Title.Value() != bookmarkTitle.Value() {
+			t.Fatalf("Title should match: expected %q, got %q", bookmarkTitle.Value(), bm.Title.Value())
+		}
+		if bm.Description.Value() != bookmarkDescription.Value() {
+			t.Fatalf("Description should match: expected %q, got %q", bookmarkDescription.Value(), bm.Description.Value())
+		}
+		if len(bm.Tags) != len(bookmarkTags) {
+			t.Fatalf("Tags length should match: expected %d, got %d", len(bookmarkTags), len(bm.Tags))
+		}
+		if time.Since(bm.CreatedAt) > time.Second {
+			t.Fatalf("CreatedAt should be recent: got %v", bm.CreatedAt)
+		}
+		if time.Since(bm.UpdatedAt) > time.Second {
+			t.Fatalf("UpdatedAt should be recent: got %v", bm.UpdatedAt)
 		}
 	})
 }
