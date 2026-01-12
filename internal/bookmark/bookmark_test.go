@@ -5,8 +5,48 @@ import (
 	"testing"
 
 	"github.com/airRnot1106/bkm/internal/bookmark"
+	"github.com/google/uuid"
 	"pgregory.net/rapid"
 )
+
+func TestNewBookmarkID_ValidUUIDsAlwaysSucceed(t *testing.T) {
+	uuid := uuid.New()
+
+	bookmarkID, err := bookmark.NewBookmarkID(uuid.String())
+
+	if err != nil {
+		t.Fatalf("valid UUID %q should succeed, got error: %v", uuid, err)
+	}
+
+	if bookmarkID.Value() != uuid.String() {
+		t.Fatalf("UUID value should be preserved: expected %q, got %q",
+			uuid, bookmarkID.Value())
+	}
+}
+
+func TestNewBookmarkID_InvalidUUIDsAlwaysFail(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		invalidUUID := rapid.String().Filter(func(s string) bool {
+			_, err := uuid.Parse(s)
+			return err != nil
+		}).Draw(t, "invalidUUID")
+
+		_, err := bookmark.NewBookmarkID(invalidUUID)
+
+		if err == nil {
+			t.Fatalf("invalid UUID %q should fail", invalidUUID)
+		}
+	})
+}
+
+func TestGenerateBookmarkID_AlwaysGeneratesValidUUID(t *testing.T) {
+	bookmarkID := bookmark.GenerateBookmarkID()
+
+	if _, err := uuid.Parse(bookmarkID.Value()); err != nil {
+		t.Fatalf("generated BookmarkID %q should be valid UUID, got error: %v",
+			bookmarkID.Value(), err)
+	}
+}
 
 func TestNewBookmarkURL_ValidURLsAlwaysSucceed(t *testing.T) {
 	rapid.Check(t, func(t *rapid.T) {

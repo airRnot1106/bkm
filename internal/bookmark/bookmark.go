@@ -4,7 +4,28 @@ import (
 	"errors"
 	"net/url"
 	"strings"
+
+	"github.com/google/uuid"
 )
+
+type BookmarkID struct {
+	value string
+}
+
+func NewBookmarkID(id string) (BookmarkID, error) {
+	if _, err := uuid.Parse(id); err != nil {
+		return BookmarkID{}, errors.New("invalid UUID format")
+	}
+	return BookmarkID{value: id}, nil
+}
+
+func GenerateBookmarkID() BookmarkID {
+	return BookmarkID{value: uuid.New().String()}
+}
+
+func (i BookmarkID) Value() string {
+	return i.value
+}
 
 type BookmarkURL struct {
 	value string
