@@ -44,3 +44,17 @@ func NewBookmarkTitle(title string) (BookmarkTitle, error) {
 func (t BookmarkTitle) Value() string {
 	return t.value
 }
+
+type BookmarkDescription struct {
+	value string
+}
+
+func NewBookmarkDescription(description string) BookmarkDescription {
+	trimmed := strings.TrimSpace(description)
+
+	return BookmarkDescription{value: trimmed}
+}
+
+func (d BookmarkDescription) Value() string {
+	return d.value
+}

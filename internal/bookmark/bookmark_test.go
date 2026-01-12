@@ -103,3 +103,18 @@ func TestNewBookmarkTitle_EmptyOrWhitespaceOnlyAlwaysFails(t *testing.T) {
 		}
 	})
 }
+
+func TestNewBookmarkDescription_AnyStringAlwaysSucceeds(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		description := rapid.String().Draw(t, "description")
+
+		bookmarkDescription := bookmark.NewBookmarkDescription(description)
+
+		trimmed := strings.TrimSpace(description)
+
+		if bookmarkDescription.Value() != trimmed {
+			t.Fatalf("description value should be preserved: expected %q, got %q",
+				trimmed, bookmarkDescription.Value())
+		}
+	})
+}
