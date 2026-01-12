@@ -118,3 +118,36 @@ func TestNewBookmarkDescription_AnyStringAlwaysSucceeds(t *testing.T) {
 		}
 	})
 }
+
+func TestNewBookmarkTag_ValidTagsAlwaysSucceed(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		tag := rapid.String().Filter(func(s string) bool {
+			return strings.TrimSpace(s) != ""
+		}).Draw(t, "tag")
+
+		bookmarkTag, err := bookmark.NewBookmarkTag(tag)
+
+		if err != nil {
+			t.Fatalf("valid tag %q should succeed, got error: %v", tag, err)
+		}
+
+		trimmed := strings.TrimSpace(tag)
+
+		if bookmarkTag.Value() != trimmed {
+			t.Fatalf("tag value should be preserved: expected %q, got %q",
+				trimmed, bookmarkTag.Value())
+		}
+	})
+}
+
+func TestNewBookmarkTag_EmptyOrWhitespaceOnlyAlwaysFails(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		tag := rapid.StringMatching(`\s*`).Draw(t, "tag")
+
+		_, err := bookmark.NewBookmarkTag(tag)
+
+		if err == nil {
+			t.Fatalf("empty or whitespace-only tag %q should fail", tag)
+		}
+	})
+}

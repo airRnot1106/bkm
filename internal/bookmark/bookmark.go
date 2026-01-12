@@ -58,3 +58,21 @@ func NewBookmarkDescription(description string) BookmarkDescription {
 func (d BookmarkDescription) Value() string {
 	return d.value
 }
+
+type BookmarkTag struct {
+	value string
+}
+
+func NewBookmarkTag(tag string) (BookmarkTag, error) {
+	trimmed := strings.TrimSpace(tag)
+
+	if trimmed == "" {
+		return BookmarkTag{}, errors.New("tag cannot be empty")
+	}
+
+	return BookmarkTag{value: trimmed}, nil
+}
+
+func (t BookmarkTag) Value() string {
+	return t.value
+}
