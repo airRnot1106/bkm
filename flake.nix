@@ -78,5 +78,11 @@
           };
         }
       );
+      packages = eachSystem (
+        { pkgs, ... }:
+        {
+          default = pkgs.callPackage ./default.nix { };
+        }
+      );
     };
 }

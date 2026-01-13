@@ -18,5 +18,6 @@ testdata
 
 .direnv
 .pre-commit-config.yaml
+result
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Go,direnv,nix
