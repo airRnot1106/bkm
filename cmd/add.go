@@ -70,11 +70,25 @@ func runAdd(cmd *cobra.Command, args []string) error {
 	}
 
 	uc := usecase.NewAddBookmark(repo)
-	if err := uc.Execute(input); err != nil {
+	bm, err := uc.Execute(input)
+	if err != nil {
 		return fmt.Errorf("failed to add bookmark: %w", err)
 	}
 
-	fmt.Println("Bookmark added successfully!")
+	fmt.Println("✓ Bookmark added successfully!")
+	fmt.Println()
+	fmt.Printf("  URL:         %s\n", bm.URL.Value())
+	fmt.Printf("  Title:       %s\n", bm.Title.Value())
+	if desc := bm.Description.Value(); desc != "" {
+		fmt.Printf("  Description: %s\n", desc)
+	}
+	if len(bm.Tags) > 0 {
+		tagStrs := make([]string, len(bm.Tags))
+		for i, tag := range bm.Tags {
+			tagStrs[i] = tag.Value()
+		}
+		fmt.Printf("  Tags:        %s\n", strings.Join(tagStrs, ", "))
+	}
 	return nil
 }
 

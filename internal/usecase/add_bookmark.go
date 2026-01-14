@@ -21,15 +21,15 @@ func NewAddBookmark(repo bookmark.Repository) *AddBookmark {
 	return &AddBookmark{repo: repo}
 }
 
-func (uc *AddBookmark) Execute(input AddBookmarkInput) error {
+func (uc *AddBookmark) Execute(input AddBookmarkInput) (bookmark.Bookmark, error) {
 	url, err := bookmark.NewBookmarkURL(input.URL)
 	if err != nil {
-		return fmt.Errorf("invalid URL: %w", err)
+		return bookmark.Bookmark{}, fmt.Errorf("invalid URL: %w", err)
 	}
 
 	title, err := bookmark.NewBookmarkTitle(input.Title)
 	if err != nil {
-		return fmt.Errorf("invalid title: %w", err)
+		return bookmark.Bookmark{}, fmt.Errorf("invalid title: %w", err)
 	}
 
 	desc := bookmark.NewBookmarkDescription(input.Description)
@@ -38,7 +38,7 @@ func (uc *AddBookmark) Execute(input AddBookmarkInput) error {
 	for i, t := range input.Tags {
 		tag, err := bookmark.NewBookmarkTag(t)
 		if err != nil {
-			return fmt.Errorf("invalid tag at index %d: %w", i, err)
+			return bookmark.Bookmark{}, fmt.Errorf("invalid tag at index %d: %w", i, err)
 		}
 		tags = append(tags, tag)
 	}
@@ -46,8 +46,8 @@ func (uc *AddBookmark) Execute(input AddBookmarkInput) error {
 	bm := bookmark.CreateBookmark(url, title, desc, tags)
 
 	if err := uc.repo.Add(bm); err != nil {
-		return fmt.Errorf("failed to add bookmark: %w", err)
+		return bookmark.Bookmark{}, fmt.Errorf("failed to add bookmark: %w", err)
 	}
 
-	return nil
+	return bm, nil
 }

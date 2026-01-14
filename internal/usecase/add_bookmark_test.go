@@ -39,7 +39,7 @@ func TestAddBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 		Tags:        []string{"tag1", "tag2"},
 	}
 
-	err := uc.Execute(input)
+	bm, err := uc.Execute(input)
 	if err != nil {
 		t.Fatalf("expected success, got error: %v", err)
 	}
@@ -48,7 +48,6 @@ func TestAddBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 		t.Fatalf("expected 1 bookmark, got %d", len(repo.bookmarks))
 	}
 
-	bm := repo.bookmarks[0]
 	if bm.URL.Value() != input.URL {
 		t.Errorf("expected URL %s, got %s", input.URL, bm.URL.Value())
 	}
@@ -79,7 +78,7 @@ func TestAddBookmark_InvalidURLAlwaysFails(t *testing.T) {
 		Tags:        []string{"tag1", "tag2"},
 	}
 
-	err := uc.Execute(input)
+	_, err := uc.Execute(input)
 	if err == nil {
 		t.Fatalf("expected error for invalid URL, got success")
 	}
@@ -96,7 +95,7 @@ func TestAddBookmark_InvalidTitleAlwaysFails(t *testing.T) {
 		Tags:        []string{"tag1", "tag2"},
 	}
 
-	err := uc.Execute(input)
+	_, err := uc.Execute(input)
 	if err == nil {
 		t.Fatalf("expected error for invalid Title, got success")
 	}
@@ -113,7 +112,7 @@ func TestAddBookmark_InvalidTagAlwaysFails(t *testing.T) {
 		Tags:        []string{"tag1", ""},
 	}
 
-	err := uc.Execute(input)
+	_, err := uc.Execute(input)
 	if err == nil {
 		t.Fatalf("expected error for invalid Tag, got success")
 	}
@@ -130,13 +129,31 @@ func TestAddBookmark_EmptyTagsSucceed(t *testing.T) {
 		Tags:        []string{},
 	}
 
-	err := uc.Execute(input)
+	bm, err := uc.Execute(input)
 	if err != nil {
 		t.Fatalf("expected success for empty tags, got error: %v", err)
 	}
 
 	if len(repo.bookmarks) != 1 {
 		t.Fatalf("expected 1 bookmark, got %d", len(repo.bookmarks))
+	}
+
+	if bm.URL.Value() != input.URL {
+		t.Errorf("expected URL %s, got %s", input.URL, bm.URL.Value())
+	}
+	if bm.Title.Value() != input.Title {
+		t.Errorf("expected Title %s, got %s", input.Title, bm.Title.Value())
+	}
+	if bm.Description.Value() != input.Description {
+		t.Errorf("expected Description %s, got %s", input.Description, bm.Description.Value())
+	}
+	if len(bm.Tags) != len(input.Tags) {
+		t.Errorf("expected %d tags, got %d", len(input.Tags), len(bm.Tags))
+	}
+	for i, tag := range bm.Tags {
+		if tag.Value() != input.Tags[i] {
+			t.Errorf("expected tag %s, got %s", input.Tags[i], tag.Value())
+		}
 	}
 }
 
@@ -155,7 +172,7 @@ func TestAddBookmark_RepositoryAddFails(t *testing.T) {
 		Tags:        []string{"tag1", "tag2"},
 	}
 
-	err := uc.Execute(input)
+	_, err := uc.Execute(input)
 	if err == nil {
 		t.Fatalf("expected error from repository add, got success")
 	}
