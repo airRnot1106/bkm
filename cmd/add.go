@@ -64,7 +64,7 @@ func runAdd(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	repo, err := storage.NewJSONStorage("")
+	repo, err := storage.NewDefaultJSONStorage()
 	if err != nil {
 		return fmt.Errorf("failed to initialize storage: %w", err)
 	}

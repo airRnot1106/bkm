@@ -28,17 +28,21 @@ type JSONStorage struct {
 
 var _ bookmark.Repository = (*JSONStorage)(nil)
 
-func NewJSONStorage(filePath string) (*JSONStorage, error) {
-	if filePath == "" {
-		dataDir := filepath.Join(xdg.DataHome, "bkm")
-		filePath = filepath.Join(dataDir, "bookmarks.json")
-	}
+func NewDefaultJSONStorage() (*JSONStorage, error) {
+	dataDir := filepath.Join(xdg.DataHome, "bkm")
+	filePath := filepath.Join(dataDir, "bookmarks.json")
+	return newJSONStorage(filePath)
+}
 
+func NewJSONStorage(filePath string) (*JSONStorage, error) {
+	return newJSONStorage(filePath)
+}
+
+func newJSONStorage(filePath string) (*JSONStorage, error) {
 	dir := filepath.Dir(filePath)
 	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return nil, fmt.Errorf("failed to create data directory: %w", err)
 	}
-
 	return &JSONStorage{filePath: filePath}, nil
 }
 
