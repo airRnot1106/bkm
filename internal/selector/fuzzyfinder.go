@@ -28,6 +28,9 @@ func (s *FuzzyFinderSelector) Select(bookmarks []bookmark.Bookmark) (bookmark.Bo
 			return formatBookmarkForDisplay(bookmarks[i])
 		},
 		fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
+			if i < 0 || i >= len(bookmarks) {
+				return ""
+			}
 			return formatBookmarkForPreview(bookmarks[i])
 		}),
 	)
