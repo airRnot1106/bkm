@@ -58,10 +58,7 @@ func (uc *SearchBookmark) Execute(input SearchBookmarkInput) (bookmark.Bookmark,
 
 	bm, err := uc.selector.Select(bookmarksFilteredByTags)
 	if err != nil {
-		if err == selector.ErrCancelled {
-			return bookmark.Bookmark{}, nil
-		}
-		return bookmark.Bookmark{}, fmt.Errorf("failed to select bookmark: %w", err)
+		return bookmark.Bookmark{}, err
 	}
 
 	return bm, nil

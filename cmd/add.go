@@ -11,13 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	url         string
-	title       string
-	description string
-	tags        []string
-)
-
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
@@ -35,10 +28,10 @@ Or run without flags for interactive mode:
 func init() {
 	rootCmd.AddCommand(addCmd)
 
-	addCmd.Flags().StringVarP(&url, "url", "u", "", "URL of the bookmark")
-	addCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the bookmark")
-	addCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the bookmark")
-	addCmd.Flags().StringSliceVarP(&tags, "tags", "T", []string{}, "Tags (comma-separated)")
+	addCmd.Flags().StringP("url", "u", "", "URL of the bookmark")
+	addCmd.Flags().StringP("title", "t", "", "Title of the bookmark")
+	addCmd.Flags().StringP("description", "d", "", "Description of the bookmark")
+	addCmd.Flags().StringSliceP("tags", "T", []string{}, "Tags (comma-separated)")
 }
 
 func runAdd(cmd *cobra.Command, args []string) error {
@@ -50,6 +43,23 @@ func runAdd(cmd *cobra.Command, args []string) error {
 	var input usecase.AddBookmarkInput
 
 	if flagsProvided {
+		url, err := cmd.Flags().GetString("url")
+		if err != nil {
+			return fmt.Errorf("failed to get url flag: %w", err)
+		}
+		title, err := cmd.Flags().GetString("title")
+		if err != nil {
+			return fmt.Errorf("failed to get title flag: %w", err)
+		}
+		description, err := cmd.Flags().GetString("description")
+		if err != nil {
+			return fmt.Errorf("failed to get description flag: %w", err)
+		}
+		tags, err := cmd.Flags().GetStringSlice("tags")
+		if err != nil {
+			return fmt.Errorf("failed to get tags flag: %w", err)
+		}
+
 		input = usecase.AddBookmarkInput{
 			URL:         url,
 			Title:       title,
