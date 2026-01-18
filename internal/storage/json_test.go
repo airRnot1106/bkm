@@ -10,7 +10,7 @@ import (
 	"github.com/airRnot1106/bkm/internal/storage"
 )
 
-func TestDefaultNewJSONStorage_DefaultPath(t *testing.T) {
+func TestNewDefaultJSONStorage_DefaultPath(t *testing.T) {
 	st, err := storage.NewDefaultJSONStorage()
 	if err != nil {
 		t.Fatalf("NewDefaultJSONStorage should succeed: %v", err)
