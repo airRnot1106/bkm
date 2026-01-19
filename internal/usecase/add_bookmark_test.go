@@ -28,6 +28,10 @@ func (m *mockRepository) List() ([]bookmark.Bookmark, error) {
 	return m.bookmarks, nil
 }
 
+func (m *mockRepository) Delete(id bookmark.BookmarkID) error {
+	return fmt.Errorf("not implemented")
+}
+
 func TestAddBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 	repo := &mockRepository{}
 	uc := NewAddBookmark(repo)

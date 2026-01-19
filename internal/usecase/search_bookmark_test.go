@@ -31,6 +31,10 @@ func (m *mockRepository) List() ([]bookmark.Bookmark, error) {
 	return m.bookmarks, nil
 }
 
+func (m *mockRepository) Delete(id bookmark.BookmarkID) error {
+	return fmt.Errorf("not implemented")
+}
+
 type mockSelector struct {
 	selectFunc func([]bookmark.Bookmark) (bookmark.Bookmark, error)
 }

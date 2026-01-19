@@ -121,3 +121,36 @@ func TestJSONStorage_ListEmpty(t *testing.T) {
 		t.Fatalf("expected 0 bookmarks, got %d", len(bookmarks))
 	}
 }
+
+func TestJSONStorage_Delete(t *testing.T) {
+	tmpDir := t.TempDir()
+	filePath := filepath.Join(tmpDir, "bookmarks.json")
+	st, err := storage.NewJSONStorage(filePath)
+	if err != nil {
+		t.Fatalf("setup failed: %v", err)
+	}
+
+	url, _ := bookmark.NewBookmarkURL("https://example.com")
+	title, _ := bookmark.NewBookmarkTitle("Example")
+	desc := bookmark.NewBookmarkDescription("Test description")
+	bm := bookmark.CreateBookmark(url, title, desc, nil)
+
+	err = st.Add(bm)
+	if err != nil {
+		t.Fatalf("Add should succeed: %v", err)
+	}
+
+	err = st.Delete(bm.ID)
+	if err != nil {
+		t.Fatalf("Delete should succeed: %v", err)
+	}
+
+	bookmarks, err := st.List()
+	if err != nil {
+		t.Fatalf("List should succeed: %v", err)
+	}
+
+	if len(bookmarks) != 0 {
+		t.Fatalf("expected 0 bookmarks after deletion, got %d", len(bookmarks))
+	}
+}

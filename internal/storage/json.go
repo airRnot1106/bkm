@@ -97,6 +97,36 @@ func (s *JSONStorage) List() ([]bookmark.Bookmark, error) {
 	return bookmarks, nil
 }
 
+func (s *JSONStorage) Delete(id bookmark.BookmarkID) error {
+	bookmarks, err := s.List()
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("failed to read existing bookmarks: %w", err)
+	}
+
+	var updatedBookmarks []bookmark.Bookmark
+	for _, bm := range bookmarks {
+		if bm.ID != id {
+			updatedBookmarks = append(updatedBookmarks, bm)
+		}
+	}
+
+	dtos := make([]bookmarkJSON, len(updatedBookmarks))
+	for i, b := range updatedBookmarks {
+		dtos[i] = toDTO(b)
+	}
+
+	data, err := json.MarshalIndent(dtos, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal bookmarks: %w", err)
+	}
+
+	if err := os.WriteFile(s.filePath, data, 0o600); err != nil {
+		return fmt.Errorf("failed to write file: %w", err)
+	}
+
+	return nil
+}
+
 func toDTO(bm bookmark.Bookmark) bookmarkJSON {
 	tags := make([]string, len(bm.Tags))
 	for i, tag := range bm.Tags {
