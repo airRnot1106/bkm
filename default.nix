@@ -18,7 +18,7 @@ buildGoModule {
   doCheck = false;
 
   meta = {
-    description = "";
+    description = "Bookmark manager for CLI";
     homepage = "https://github.com/airRnot1106/bkm";
     license = lib.licenses.mit;
     mainProgram = "bkm";
