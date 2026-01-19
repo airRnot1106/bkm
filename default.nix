@@ -4,7 +4,7 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "bkm";
-  version = "dev";
+  version = "0.1.0";
 
   src = ./.;
 
