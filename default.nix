@@ -2,7 +2,7 @@
   lib,
   buildGoModule,
 }:
-buildGoModule {
+buildGoModule (finalAttrs: {
   pname = "bkm";
   version = "dev";
 
@@ -13,6 +13,7 @@ buildGoModule {
   ldflags = [
     "-s"
     "-w"
+    "-X github.com/airRnot1106/bkm/cmd.version=${finalAttrs.version}"
   ];
 
   doCheck = false;
@@ -23,4 +24,4 @@ buildGoModule {
     license = lib.licenses.mit;
     mainProgram = "bkm";
   };
-}
+})

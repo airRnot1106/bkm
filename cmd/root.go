@@ -6,10 +6,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// version is set by ldflags during build
+var version = "dev"
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "bkm",
-	Short: "A CLI tool for managing bookmarks",
+	Use:     "bkm",
+	Short:   "A CLI tool for managing bookmarks",
+	Version: version,
 	Long: `bkm is a command-line bookmark manager that allows you to:
   - Add bookmarks with URLs, titles, descriptions, and tags
   - Search bookmarks with fuzzy finder
