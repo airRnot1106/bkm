@@ -1,19 +1,20 @@
-package usecase
+package usecase_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/airRnot1106/bkm/internal/bookmark"
+	"github.com/airRnot1106/bkm/internal/usecase"
 )
 
-type mockRepository struct {
+type mockRepositoryForAdd struct {
 	addFunc   func(bookmark.Bookmark) error
 	listFunc  func() ([]bookmark.Bookmark, error)
 	bookmarks []bookmark.Bookmark
 }
 
-func (m *mockRepository) Add(bm bookmark.Bookmark) error {
+func (m *mockRepositoryForAdd) Add(bm bookmark.Bookmark) error {
 	if m.addFunc != nil {
 		return m.addFunc(bm)
 	}
@@ -21,22 +22,22 @@ func (m *mockRepository) Add(bm bookmark.Bookmark) error {
 	return nil
 }
 
-func (m *mockRepository) List() ([]bookmark.Bookmark, error) {
+func (m *mockRepositoryForAdd) List() ([]bookmark.Bookmark, error) {
 	if m.listFunc != nil {
 		return m.listFunc()
 	}
 	return m.bookmarks, nil
 }
 
-func (m *mockRepository) Delete(id bookmark.BookmarkID) error {
+func (m *mockRepositoryForAdd) Delete(id bookmark.BookmarkID) error {
 	return fmt.Errorf("not implemented")
 }
 
 func TestAddBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
-	repo := &mockRepository{}
-	uc := NewAddBookmark(repo)
+	repo := &mockRepositoryForAdd{}
+	uc := usecase.NewAddBookmark(repo)
 
-	input := AddBookmarkInput{
+	input := usecase.AddBookmarkInput{
 		URL:         "https://example.com",
 		Title:       "Example",
 		Description: "An example bookmark",
@@ -72,10 +73,10 @@ func TestAddBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 }
 
 func TestAddBookmark_InvalidURLAlwaysFails(t *testing.T) {
-	repo := &mockRepository{}
-	uc := NewAddBookmark(repo)
+	repo := &mockRepositoryForAdd{}
+	uc := usecase.NewAddBookmark(repo)
 
-	input := AddBookmarkInput{
+	input := usecase.AddBookmarkInput{
 		URL:         "invalid-url",
 		Title:       "Example",
 		Description: "An example bookmark",
@@ -89,10 +90,10 @@ func TestAddBookmark_InvalidURLAlwaysFails(t *testing.T) {
 }
 
 func TestAddBookmark_InvalidTitleAlwaysFails(t *testing.T) {
-	repo := &mockRepository{}
-	uc := NewAddBookmark(repo)
+	repo := &mockRepositoryForAdd{}
+	uc := usecase.NewAddBookmark(repo)
 
-	input := AddBookmarkInput{
+	input := usecase.AddBookmarkInput{
 		URL:         "https://example.com",
 		Title:       "",
 		Description: "An example bookmark",
@@ -106,10 +107,10 @@ func TestAddBookmark_InvalidTitleAlwaysFails(t *testing.T) {
 }
 
 func TestAddBookmark_InvalidTagAlwaysFails(t *testing.T) {
-	repo := &mockRepository{}
-	uc := NewAddBookmark(repo)
+	repo := &mockRepositoryForAdd{}
+	uc := usecase.NewAddBookmark(repo)
 
-	input := AddBookmarkInput{
+	input := usecase.AddBookmarkInput{
 		URL:         "https://example.com",
 		Title:       "Example",
 		Description: "An example bookmark",
@@ -123,10 +124,10 @@ func TestAddBookmark_InvalidTagAlwaysFails(t *testing.T) {
 }
 
 func TestAddBookmark_EmptyTagsSucceed(t *testing.T) {
-	repo := &mockRepository{}
-	uc := NewAddBookmark(repo)
+	repo := &mockRepositoryForAdd{}
+	uc := usecase.NewAddBookmark(repo)
 
-	input := AddBookmarkInput{
+	input := usecase.AddBookmarkInput{
 		URL:         "https://example.com",
 		Title:       "Example",
 		Description: "An example bookmark",
@@ -162,14 +163,14 @@ func TestAddBookmark_EmptyTagsSucceed(t *testing.T) {
 }
 
 func TestAddBookmark_RepositoryAddFails(t *testing.T) {
-	repo := &mockRepository{
+	repo := &mockRepositoryForAdd{
 		addFunc: func(bm bookmark.Bookmark) error {
 			return fmt.Errorf("repository add error")
 		},
 	}
-	uc := NewAddBookmark(repo)
+	uc := usecase.NewAddBookmark(repo)
 
-	input := AddBookmarkInput{
+	input := usecase.AddBookmarkInput{
 		URL:         "https://example.com",
 		Title:       "Example",
 		Description: "An example bookmark",

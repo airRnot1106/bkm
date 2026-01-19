@@ -8,11 +8,11 @@ import (
 	"github.com/airRnot1106/bkm/internal/usecase"
 )
 
-type mockOpener struct {
+type mockOpenerForOpener struct {
 	openFunc func(bookmark.Bookmark) error
 }
 
-func (m *mockOpener) Open(bm bookmark.Bookmark) error {
+func (m *mockOpenerForOpener) Open(bm bookmark.Bookmark) error {
 	if m.openFunc != nil {
 		return m.openFunc(bm)
 	}
@@ -20,7 +20,7 @@ func (m *mockOpener) Open(bm bookmark.Bookmark) error {
 }
 
 func TestOpenBookmark_Success(t *testing.T) {
-	opener := &mockOpener{}
+	opener := &mockOpenerForOpener{}
 	uc := usecase.NewOpenBookmark(opener)
 
 	url, _ := bookmark.NewBookmarkURL("https://example.com")
@@ -40,7 +40,7 @@ func TestOpenBookmark_Success(t *testing.T) {
 
 func TestOpenBookmark_OpenerError(t *testing.T) {
 	expectedErr := fmt.Errorf("failed to open browser")
-	opener := &mockOpener{
+	opener := &mockOpenerForOpener{
 		openFunc: func(bm bookmark.Bookmark) error {
 			return expectedErr
 		},

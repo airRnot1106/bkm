@@ -10,13 +10,13 @@ import (
 	"github.com/airRnot1106/bkm/internal/usecase"
 )
 
-type mockRepository struct {
+type mockRepositoryForSearch struct {
 	addFunc   func(bookmark.Bookmark) error
 	listFunc  func() ([]bookmark.Bookmark, error)
 	bookmarks []bookmark.Bookmark
 }
 
-func (m *mockRepository) Add(bm bookmark.Bookmark) error {
+func (m *mockRepositoryForSearch) Add(bm bookmark.Bookmark) error {
 	if m.addFunc != nil {
 		return m.addFunc(bm)
 	}
@@ -24,22 +24,22 @@ func (m *mockRepository) Add(bm bookmark.Bookmark) error {
 	return nil
 }
 
-func (m *mockRepository) List() ([]bookmark.Bookmark, error) {
+func (m *mockRepositoryForSearch) List() ([]bookmark.Bookmark, error) {
 	if m.listFunc != nil {
 		return m.listFunc()
 	}
 	return m.bookmarks, nil
 }
 
-func (m *mockRepository) Delete(id bookmark.BookmarkID) error {
+func (m *mockRepositoryForSearch) Delete(id bookmark.BookmarkID) error {
 	return fmt.Errorf("not implemented")
 }
 
-type mockSelector struct {
+type mockSelectorForSearch struct {
 	selectFunc func([]bookmark.Bookmark) (bookmark.Bookmark, error)
 }
 
-func (m *mockSelector) Select(bms []bookmark.Bookmark) (bookmark.Bookmark, error) {
+func (m *mockSelectorForSearch) Select(bms []bookmark.Bookmark) (bookmark.Bookmark, error) {
 	if m.selectFunc != nil {
 		return m.selectFunc(bms)
 	}
@@ -50,8 +50,8 @@ func (m *mockSelector) Select(bms []bookmark.Bookmark) (bookmark.Bookmark, error
 }
 
 func TestSearchBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
-	repo := &mockRepository{}
-	sel := &mockSelector{}
+	repo := &mockRepositoryForSearch{}
+	sel := &mockSelectorForSearch{}
 	uc := usecase.NewSearchBookmark(repo, sel)
 
 	var bms []bookmark.Bookmark
@@ -94,8 +94,8 @@ func TestSearchBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 }
 
 func TestSearchBookmark_NoMatchingBookmarks(t *testing.T) {
-	repo := &mockRepository{}
-	sel := &mockSelector{}
+	repo := &mockRepositoryForSearch{}
+	sel := &mockSelectorForSearch{}
 	uc := usecase.NewSearchBookmark(repo, sel)
 
 	url, _ := bookmark.NewBookmarkURL("https://example.com/page1")
@@ -116,8 +116,8 @@ func TestSearchBookmark_NoMatchingBookmarks(t *testing.T) {
 }
 
 func TestSearchBookmark_InvalidTag(t *testing.T) {
-	repo := &mockRepository{}
-	sel := &mockSelector{}
+	repo := &mockRepositoryForSearch{}
+	sel := &mockSelectorForSearch{}
 	uc := usecase.NewSearchBookmark(repo, sel)
 
 	tests := []struct {
@@ -163,12 +163,12 @@ func TestSearchBookmark_InvalidTag(t *testing.T) {
 
 func TestSearchBookmark_RepositoryListError(t *testing.T) {
 	expectedErr := fmt.Errorf("database connection failed")
-	repo := &mockRepository{
+	repo := &mockRepositoryForSearch{
 		listFunc: func() ([]bookmark.Bookmark, error) {
 			return nil, expectedErr
 		},
 	}
-	sel := &mockSelector{}
+	sel := &mockSelectorForSearch{}
 	uc := usecase.NewSearchBookmark(repo, sel)
 
 	input := usecase.SearchBookmarkInput{
