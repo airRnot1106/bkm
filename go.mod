@@ -1,6 +1,6 @@
 module github.com/airRnot1106/bkm
 
-go 1.25.5
+go 1.25.8
 
 require (
 	github.com/adrg/xdg v0.5.3

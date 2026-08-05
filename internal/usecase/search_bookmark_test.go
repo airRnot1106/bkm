@@ -61,8 +61,8 @@ func TestSearchBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 		desc := bookmark.NewBookmarkDescription(fmt.Sprintf("Description for page %d", i))
 		tags := []bookmark.BookmarkTag{}
 		if i%2 == 0 {
-			tagEven, _ := bookmark.NewBookmarkTag("even")
-			tags = append(tags, tagEven)
+			evenTag, _ := bookmark.NewBookmarkTag(tagEven)
+			tags = append(tags, evenTag)
 		} else {
 			tagOdd, _ := bookmark.NewBookmarkTag("odd")
 			tags = append(tags, tagOdd)
@@ -73,7 +73,7 @@ func TestSearchBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 	}
 
 	input := usecase.SearchBookmarkInput{
-		Tags: []string{"even"},
+		Tags: []string{tagEven},
 	}
 
 	bm, err := uc.Execute(input)
@@ -106,7 +106,7 @@ func TestSearchBookmark_NoMatchingBookmarks(t *testing.T) {
 	repo.Add(bm)
 
 	input := usecase.SearchBookmarkInput{
-		Tags: []string{"even"},
+		Tags: []string{tagEven},
 	}
 
 	_, err := uc.Execute(input)
@@ -172,7 +172,7 @@ func TestSearchBookmark_RepositoryListError(t *testing.T) {
 	uc := usecase.NewSearchBookmark(repo, sel)
 
 	input := usecase.SearchBookmarkInput{
-		Tags: []string{"test"},
+		Tags: []string{tagTest},
 	}
 
 	_, err := uc.Execute(input)
