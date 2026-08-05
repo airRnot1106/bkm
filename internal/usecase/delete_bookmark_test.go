@@ -10,6 +10,11 @@ import (
 	"github.com/airRnot1106/bkm/internal/usecase"
 )
 
+const (
+	tagTest = "test"
+	tagEven = "even"
+)
+
 type mockRepositoryForDelete struct {
 	addFunc    func(bookmark.Bookmark) error
 	listFunc   func() ([]bookmark.Bookmark, error)
@@ -64,7 +69,7 @@ func TestDeleteBookmark_Success(t *testing.T) {
 		url, _ := bookmark.NewBookmarkURL(fmt.Sprintf("https://example.com/page%d", i))
 		title, _ := bookmark.NewBookmarkTitle(fmt.Sprintf("Page %d", i))
 		desc := bookmark.NewBookmarkDescription(fmt.Sprintf("Description for page %d", i))
-		tag, _ := bookmark.NewBookmarkTag("test")
+		tag, _ := bookmark.NewBookmarkTag(tagTest)
 		bm := bookmark.CreateBookmark(url, title, desc, []bookmark.BookmarkTag{tag})
 		bms = append(bms, bm)
 		repo.Add(bm)
@@ -79,7 +84,7 @@ func TestDeleteBookmark_Success(t *testing.T) {
 	}
 
 	input := usecase.DeleteBookmarkInput{
-		Tags: []string{"test"},
+		Tags: []string{tagTest},
 	}
 
 	err := uc.Execute(input)
@@ -153,7 +158,7 @@ func TestDeleteBookmark_RepositoryListError(t *testing.T) {
 	uc := usecase.NewDeleteBookmark(repo, sel)
 
 	input := usecase.DeleteBookmarkInput{
-		Tags: []string{"test"},
+		Tags: []string{tagTest},
 	}
 
 	err := uc.Execute(input)
@@ -180,7 +185,7 @@ func TestDeleteBookmark_NoMatchingBookmarks(t *testing.T) {
 	repo.Add(bm)
 
 	input := usecase.DeleteBookmarkInput{
-		Tags: []string{"even"},
+		Tags: []string{tagEven},
 	}
 
 	err := uc.Execute(input)
@@ -207,12 +212,12 @@ func TestDeleteBookmark_SelectorError(t *testing.T) {
 	url, _ := bookmark.NewBookmarkURL("https://example.com/page1")
 	title, _ := bookmark.NewBookmarkTitle("Page 1")
 	desc := bookmark.NewBookmarkDescription("Description for page 1")
-	tag, _ := bookmark.NewBookmarkTag("test")
+	tag, _ := bookmark.NewBookmarkTag(tagTest)
 	bm := bookmark.CreateBookmark(url, title, desc, []bookmark.BookmarkTag{tag})
 	repo.Add(bm)
 
 	input := usecase.DeleteBookmarkInput{
-		Tags: []string{"test"},
+		Tags: []string{tagTest},
 	}
 
 	err := uc.Execute(input)
@@ -232,7 +237,7 @@ func TestDeleteBookmark_BookmarkNotFound(t *testing.T) {
 	url, _ := bookmark.NewBookmarkURL("https://example.com/page1")
 	title, _ := bookmark.NewBookmarkTitle("Page 1")
 	desc := bookmark.NewBookmarkDescription("Description for page 1")
-	tag, _ := bookmark.NewBookmarkTag("test")
+	tag, _ := bookmark.NewBookmarkTag(tagTest)
 	bm := bookmark.CreateBookmark(url, title, desc, []bookmark.BookmarkTag{tag})
 	repo.Add(bm)
 
@@ -240,7 +245,7 @@ func TestDeleteBookmark_BookmarkNotFound(t *testing.T) {
 	url2, _ := bookmark.NewBookmarkURL("https://example.com/page2")
 	title2, _ := bookmark.NewBookmarkTitle("Page 2")
 	desc2 := bookmark.NewBookmarkDescription("Description for page 2")
-	tag2, _ := bookmark.NewBookmarkTag("test")
+	tag2, _ := bookmark.NewBookmarkTag(tagTest)
 	nonExistentBm := bookmark.CreateBookmark(url2, title2, desc2, []bookmark.BookmarkTag{tag2})
 
 	// Mock selector to return the non-existent bookmark
@@ -252,7 +257,7 @@ func TestDeleteBookmark_BookmarkNotFound(t *testing.T) {
 	uc := usecase.NewDeleteBookmark(repo, sel)
 
 	input := usecase.DeleteBookmarkInput{
-		Tags: []string{"test"},
+		Tags: []string{tagTest},
 	}
 
 	err := uc.Execute(input)
@@ -274,7 +279,7 @@ func TestDeleteBookmark_RepositoryDeleteError(t *testing.T) {
 	url, _ := bookmark.NewBookmarkURL("https://example.com/page1")
 	title, _ := bookmark.NewBookmarkTitle("Page 1")
 	desc := bookmark.NewBookmarkDescription("Description for page 1")
-	tag, _ := bookmark.NewBookmarkTag("test")
+	tag, _ := bookmark.NewBookmarkTag(tagTest)
 	bm := bookmark.CreateBookmark(url, title, desc, []bookmark.BookmarkTag{tag})
 	repo.Add(bm)
 
@@ -284,7 +289,7 @@ func TestDeleteBookmark_RepositoryDeleteError(t *testing.T) {
 	}
 
 	input := usecase.DeleteBookmarkInput{
-		Tags: []string{"test"},
+		Tags: []string{tagTest},
 	}
 
 	err := uc.Execute(input)

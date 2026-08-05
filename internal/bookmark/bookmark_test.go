@@ -10,6 +10,12 @@ import (
 	"pgregory.net/rapid"
 )
 
+const (
+	schemeHTTP  = "http"
+	schemeHTTPS = "https"
+	schemeFTP   = "ftp"
+)
+
 func TestNewBookmarkID_ValidUUIDsAlwaysSucceed(t *testing.T) {
 	uuid := uuid.New()
 
@@ -50,7 +56,7 @@ func TestGenerateBookmarkID_AlwaysGeneratesValidUUID(t *testing.T) {
 
 func TestNewBookmarkURL_ValidURLsAlwaysSucceed(t *testing.T) {
 	rapid.Check(t, func(t *rapid.T) {
-		scheme := rapid.SampledFrom([]string{"http", "https", "ftp"}).Draw(t, "scheme")
+		scheme := rapid.SampledFrom([]string{schemeHTTP, schemeHTTPS, schemeFTP}).Draw(t, "scheme")
 		host := rapid.StringMatching(`[a-zA-Z0-9.-]+`).Draw(t, "host")
 		path := rapid.StringMatching(`(/[a-zA-Z0-9._-]+)*`).Draw(t, "path")
 
@@ -93,7 +99,7 @@ func TestNewBookmarkURL_NoSchemeAlwaysFails(t *testing.T) {
 
 func TestNewBookmarkURL_NoHostAlwaysFails(t *testing.T) {
 	rapid.Check(t, func(t *rapid.T) {
-		scheme := rapid.SampledFrom([]string{"http", "https", "ftp"}).Draw(t,
+		scheme := rapid.SampledFrom([]string{schemeHTTP, schemeHTTPS, schemeFTP}).Draw(t,
 			"scheme")
 
 		rawURL := rapid.SampledFrom([]string{
@@ -194,7 +200,7 @@ func TestBookmark_ValidBookmarkAlwaysSucceeds(t *testing.T) {
 		uuid := uuid.New()
 		bookmarkID, _ := bookmark.NewBookmarkID(uuid.String())
 
-		scheme := rapid.SampledFrom([]string{"http", "https", "ftp"}).Draw(t,
+		scheme := rapid.SampledFrom([]string{schemeHTTP, schemeHTTPS, schemeFTP}).Draw(t,
 			"scheme")
 		host := rapid.StringMatching(`[a-zA-Z0-9.-]+`).Draw(t, "host")
 		path := rapid.StringMatching(`(/[a-zA-Z0-9._-]+)*`).Draw(t, "path")
@@ -257,7 +263,7 @@ func TestBookmark_ValidBookmarkAlwaysSucceeds(t *testing.T) {
 
 func TestCreateBookmark_ValidInputAlwaysSucceeds(t *testing.T) {
 	rapid.Check(t, func(t *rapid.T) {
-		scheme := rapid.SampledFrom([]string{"http", "https", "ftp"}).Draw(t,
+		scheme := rapid.SampledFrom([]string{schemeHTTP, schemeHTTPS, schemeFTP}).Draw(t,
 			"scheme")
 		host := rapid.StringMatching(`[a-zA-Z0-9.-]+`).Draw(t, "host")
 		path := rapid.StringMatching(`(/[a-zA-Z0-9._-]+)*`).Draw(t, "path")

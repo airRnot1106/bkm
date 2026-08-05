@@ -8,6 +8,14 @@ import (
 	"github.com/airRnot1106/bkm/internal/usecase"
 )
 
+const (
+	exampleURL         = "https://example.com"
+	exampleTitle       = "Example"
+	exampleDescription = "An example bookmark"
+	exampleTag1        = "tag1"
+	exampleTag2        = "tag2"
+)
+
 type mockRepositoryForAdd struct {
 	addFunc   func(bookmark.Bookmark) error
 	listFunc  func() ([]bookmark.Bookmark, error)
@@ -38,10 +46,10 @@ func TestAddBookmark_ValidParamsAlwaysSucceed(t *testing.T) {
 	uc := usecase.NewAddBookmark(repo)
 
 	input := usecase.AddBookmarkInput{
-		URL:         "https://example.com",
-		Title:       "Example",
-		Description: "An example bookmark",
-		Tags:        []string{"tag1", "tag2"},
+		URL:         exampleURL,
+		Title:       exampleTitle,
+		Description: exampleDescription,
+		Tags:        []string{exampleTag1, exampleTag2},
 	}
 
 	bm, err := uc.Execute(input)
@@ -78,9 +86,9 @@ func TestAddBookmark_InvalidURLAlwaysFails(t *testing.T) {
 
 	input := usecase.AddBookmarkInput{
 		URL:         "invalid-url",
-		Title:       "Example",
-		Description: "An example bookmark",
-		Tags:        []string{"tag1", "tag2"},
+		Title:       exampleTitle,
+		Description: exampleDescription,
+		Tags:        []string{exampleTag1, exampleTag2},
 	}
 
 	_, err := uc.Execute(input)
@@ -94,10 +102,10 @@ func TestAddBookmark_InvalidTitleAlwaysFails(t *testing.T) {
 	uc := usecase.NewAddBookmark(repo)
 
 	input := usecase.AddBookmarkInput{
-		URL:         "https://example.com",
+		URL:         exampleURL,
 		Title:       "",
-		Description: "An example bookmark",
-		Tags:        []string{"tag1", "tag2"},
+		Description: exampleDescription,
+		Tags:        []string{exampleTag1, exampleTag2},
 	}
 
 	_, err := uc.Execute(input)
@@ -111,10 +119,10 @@ func TestAddBookmark_InvalidTagAlwaysFails(t *testing.T) {
 	uc := usecase.NewAddBookmark(repo)
 
 	input := usecase.AddBookmarkInput{
-		URL:         "https://example.com",
-		Title:       "Example",
-		Description: "An example bookmark",
-		Tags:        []string{"tag1", ""},
+		URL:         exampleURL,
+		Title:       exampleTitle,
+		Description: exampleDescription,
+		Tags:        []string{exampleTag1, ""},
 	}
 
 	_, err := uc.Execute(input)
@@ -128,9 +136,9 @@ func TestAddBookmark_EmptyTagsSucceed(t *testing.T) {
 	uc := usecase.NewAddBookmark(repo)
 
 	input := usecase.AddBookmarkInput{
-		URL:         "https://example.com",
-		Title:       "Example",
-		Description: "An example bookmark",
+		URL:         exampleURL,
+		Title:       exampleTitle,
+		Description: exampleDescription,
 		Tags:        []string{},
 	}
 
@@ -171,10 +179,10 @@ func TestAddBookmark_RepositoryAddFails(t *testing.T) {
 	uc := usecase.NewAddBookmark(repo)
 
 	input := usecase.AddBookmarkInput{
-		URL:         "https://example.com",
-		Title:       "Example",
-		Description: "An example bookmark",
-		Tags:        []string{"tag1", "tag2"},
+		URL:         exampleURL,
+		Title:       exampleTitle,
+		Description: exampleDescription,
+		Tags:        []string{exampleTag1, exampleTag2},
 	}
 
 	_, err := uc.Execute(input)
