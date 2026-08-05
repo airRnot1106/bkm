@@ -8,7 +8,7 @@ require (
 	github.com/ktr0731/go-fuzzyfinder v0.9.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/spf13/cobra v1.10.2
-	pgregory.net/rapid v1.2.0
+	pgregory.net/rapid v1.3.0
 )
 
 require (
