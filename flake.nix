@@ -63,19 +63,29 @@
       checks = eachSystem (
         { pkgs, system, ... }:
         {
-          pre-commit-check = git-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              golangci-lint = {
-                enable = true;
-                extraPackages = with pkgs; [ go ];
+          pre-commit-check =
+            let
+              run = git-hooks.lib.${system}.run {
+                src = ./.;
+                hooks = {
+                  golangci-lint = {
+                    enable = true;
+                    extraPackages = with pkgs; [ go ];
+                  };
+                  treefmt = {
+                    enable = true;
+                    package = self.formatter.${system};
+                  };
+                };
               };
-              treefmt = {
-                enable = true;
-                package = self.formatter.${system};
-              };
+            in
+            run.overrideAttrs {
+              GOPROXY = "file://${self.packages.${system}.default.goModules}";
+              GOSUMDB = "off";
+            }
+            // {
+              inherit (run) shellHook;
             };
-          };
         }
       );
       packages = eachSystem (
