@@ -8,7 +8,8 @@ buildGoModule (finalAttrs: {
 
   src = ./.;
 
-  vendorHash = "sha256-ODWo9u6fBrLYhH5caJPjWdOR1uSjZ1lQmFf+d5rZrgI=";
+  vendorHash = "sha256-Vt+nUlRMPcR6zrhq7B22qhy+rwFqB1MWaSEfJjne3MY=";
+  proxyVendor = true;
 
   ldflags = [
     "-s"
